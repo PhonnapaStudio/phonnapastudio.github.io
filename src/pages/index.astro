@@ -167,59 +167,66 @@ import "../styles/global.css";
 
   <body class="gradient-bg">
     <!-- Navbar -->
-    <nav class="fixed top-0 left-0 w-full bg-white shadow z-50">
+    <nav
+      class="fixed top-0 left-0 w-full bg-white/80 backdrop-blur shadow-md z-50"
+    >
       <div
-        class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center"
+        class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center"
       >
         <!-- Logo -->
-        <div class="">
+        <div class="flex items-center space-x-3">
           <img
             src="/images/logo.jpg"
-            alt="ตัวอย่างเล็บ"
-            class="rounded-[100vw] shadow-lg h-16 w-16"
+            alt="โลโก้ร้าน"
+            class="h-12 w-12 rounded-full shadow-md object-cover"
           />
+          <span class="text-xl font-semibold text-primary">Phonnapa Studio</span
+          >
         </div>
 
         <!-- Desktop Menu -->
-        <ul class="hidden md:flex space-x-6 text-sm font-medium">
+        <ul class="hidden md:flex space-x-6 text-base font-medium">
           <li>
-            <a href="#hero" class="nav-link text-gray-700 hover:text-primary"
-              >หน้าหลัก</a
-            >
+            <a
+              href="#hero"
+              class="nav-link text-gray-700 hover:text-primary transition"
+              >หน้าหลัก</a>
           </li>
           <li>
             <a
               href="#services"
-              class="nav-link text-gray-700 hover:text-primary">บริการ</a
-            >
+              class="nav-link text-gray-700 hover:text-primary transition"
+              >บริการ</a>
           </li>
           <li>
             <a
               href="#highlights"
-              class="nav-link text-gray-700 hover:text-primary">จุดเด่น</a
-            >
+              class="nav-link text-gray-700 hover:text-primary transition"
+              >จุดเด่น</a>
           </li>
           <li>
             <a
               href="#atmosphere"
-              class="nav-link text-gray-700 hover:text-primary">บรรยากาศ</a
-            >
+              class="nav-link text-gray-700 hover:text-primary transition"
+              >บรรยากาศ</a>
           </li>
           <li>
             <a
               href="#promotions"
-              class="nav-link text-gray-700 hover:text-primary">โปรโมชั่น</a
-            >
+              class="nav-link text-gray-700 hover:text-primary transition"
+              >โปรโมชั่น</a>
           </li>
           <li>
-            <a href="#reviews" class="nav-link text-gray-700 hover:text-primary"
-              >รีวิว</a
-            >
+            <a
+              href="#reviews"
+              class="nav-link text-gray-700 hover:text-primary transition"
+              >รีวิว</a>
           </li>
           <li>
-            <a href="#contact" class="nav-link text-gray-700 hover:text-primary"
-              >ติดต่อ</a
-            >
+            <a
+              href="#contact"
+              class="nav-link text-gray-700 hover:text-primary transition"
+              >ติดต่อ</a>
           </li>
         </ul>
 
@@ -244,42 +251,49 @@ import "../styles/global.css";
       </div>
 
       <!-- Mobile Menu -->
-      <div id="mobile-menu" class="hidden md:hidden px-4 pb-4">
-        <ul class="flex flex-col space-y-2 text-sm font-medium">
+      <div id="mobile-menu" class="hidden md:hidden px-6 pb-6">
+        <ul class="flex flex-col space-y-3 text-base font-medium">
           <li>
-            <a href="#hero" class="block text-gray-700 hover:text-primary"
-              >หน้าหลัก</a
-            >
+            <a
+              href="#hero"
+              class="block text-gray-700 hover:text-primary transition"
+              >หน้าหลัก</a>
           </li>
           <li>
-            <a href="#services" class="block text-gray-700 hover:text-primary"
-              >บริการ</a
-            >
+            <a
+              href="#services"
+              class="block text-gray-700 hover:text-primary transition"
+              >บริการ</a>
           </li>
           <li>
-            <a href="#highlights" class="block text-gray-700 hover:text-primary"
-              >จุดเด่น</a
-            >
+            <a
+              href="#highlights"
+              class="block text-gray-700 hover:text-primary transition"
+              >จุดเด่น</a>
           </li>
           <li>
-            <a href="#atmosphere" class="block text-gray-700 hover:text-primary"
-              >บรรยากาศ</a
-            >
+            <a
+              href="#atmosphere"
+              class="block text-gray-700 hover:text-primary transition"
+              >บรรยากาศ</a>
           </li>
           <li>
-            <a href="#promotions" class="block text-gray-700 hover:text-primary"
-              >โปรโมชั่น</a
-            >
+            <a
+              href="#promotions"
+              class="block text-gray-700 hover:text-primary transition"
+              >โปรโมชั่น</a>
           </li>
           <li>
-            <a href="#reviews" class="block text-gray-700 hover:text-primary"
-              >รีวิว</a
-            >
+            <a
+              href="#reviews"
+              class="block text-gray-700 hover:text-primary transition"
+              >รีวิว</a>
           </li>
           <li>
-            <a href="#contact" class="block text-gray-700 hover:text-primary"
-              >ติดต่อ</a
-            >
+            <a
+              href="#contact"
+              class="block text-gray-700 hover:text-primary transition"
+              >ติดต่อ</a>
           </li>
         </ul>
       </div>
@@ -291,14 +305,14 @@ import "../styles/global.css";
       id="hero"
     >
       <div class="absolute inset-0 bg-white bg-opacity-30"></div>
-      <div class="container mx-auto px-4 py-16 relative z-10">
+      <div class="container mx-auto px-4 lg:px-10 py-16 relative z-10">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
           <!-- Hero Content -->
           <div
             class="text-center lg:text-left animate__animated animate__fadeInLeft"
           >
             <div
-              class="inline-flex items-center bg-white bg-opacity-90 rounded-full px-6 py-3 mb-6 shadow-lg mt-2 lg:mt-0 lg:mb-4"
+              class="inline-flex items-center bg-white bg-opacity-90 rounded-full px-6 py-3 mb-6 shadow-lg mt-6 lg:mt-0 lg:mb-4"
             >
               <i class="fas fa-crown text-primary mr-2"></i>
               <span class="font-semibold text-gray-800">Phonnapa Studio</span>
@@ -381,7 +395,7 @@ import "../styles/global.css";
 
     <!-- Service Section -->
     <section class="py-20 bg-white" id="services">
-      <div class="container mx-auto px-4">
+      <div class="container mx-auto px-4 lg:px-10">
         <div class="text-center mb-16 animate__animated animate__fadeInUp">
           <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
             บริการของเรา
@@ -554,7 +568,7 @@ import "../styles/global.css";
 
     <!-- Highlight Section -->
     <section class="py-20 bg-soft" id="highlights">
-      <div class="container mx-auto px-4">
+      <div class="container mx-auto px-4 lg:px-10">
         <div class="text-center mb-16 animate__animated animate__fadeInUp">
           <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
             ทำไมต้องเลือกเรา?
@@ -644,7 +658,7 @@ import "../styles/global.css";
 
     <!-- Atmosphere Section -->
     <section class="py-20 bg-white" id="atmosphere">
-      <div class="container mx-auto px-4">
+      <div class="container mx-auto px-4 lg:px-10">
         <div class="text-center mb-16 animate__animated animate__fadeInUp">
           <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
             บรรยากาศร้าน
@@ -735,7 +749,7 @@ import "../styles/global.css";
       class="py-20 bg-gradient-to-r from-pink-100 to-purple-100"
       id="promotions"
     >
-      <div class="container mx-auto px-4">
+      <div class="container mx-auto px-4 lg:px-10">
         <div class="text-center mb-16 animate__animated animate__fadeInUp">
           <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
             โปรโมชั่นพิเศษ
@@ -803,7 +817,7 @@ import "../styles/global.css";
 
     <!-- Review Section -->
     <section class="py-20 bg-white" id="reviews">
-      <div class="container mx-auto px-4">
+      <div class="container mx-auto px-4 lg:px-10">
         <div class="text-center mb-16 animate__animated animate__fadeInUp">
           <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
             รีวิวจากลูกค้า
@@ -911,7 +925,7 @@ import "../styles/global.css";
 
     <!-- Contact Section -->
     <section id="contact" class="py-20 bg-soft" id="contact">
-      <div class="container mx-auto px-4">
+      <div class="container mx-auto px-4 lg:px-10">
         <div class="text-center mb-16 animate__animated animate__fadeInUp">
           <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
             ติดต่อเรา
@@ -1042,7 +1056,7 @@ import "../styles/global.css";
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-12">
-      <div class="container mx-auto px-4">
+      <div class="container mx-auto px-4 lg:px-10">
         <div class="grid md:grid-cols-3 gap-8">
           <div>
             <h3 class="text-2xl font-bold mb-4 text-primary">
