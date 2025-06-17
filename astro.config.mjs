@@ -5,10 +5,10 @@ import sitemap from "@astrojs/sitemap";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://phonnapastudio.github.io/pnp-landing/",
-  base: "/pnp-landing/",
+  site: "https://phonnapastudio.github.io/",
+  base: "/",
   vite: {
     plugins: [tailwindcss()],
   },
-//   integrations: [sitemap()],
+  //   integrations: [sitemap()],
 });
