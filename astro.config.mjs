@@ -15,6 +15,7 @@ export default defineConfig({
 
   integrations: [
     sitemap({
+      filenameBase: "mainmap",
       changefreq: "monthly", // index.astro ไม่ได้เปลี่ยนบ่อย
       priority: 1.0, // หน้า Landing Page สำคัญที่สุด
     }),
