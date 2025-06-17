@@ -7,8 +7,16 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
   site: "https://phonnapastudio.github.io/",
   base: "/",
+
+  //   integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],
   },
-  //   integrations: [sitemap()],
+
+  integrations: [
+    sitemap({
+      changefreq: "monthly", // index.astro ไม่ได้เปลี่ยนบ่อย
+      priority: 1.0, // หน้า Landing Page สำคัญที่สุด
+    }),
+  ],
 });
