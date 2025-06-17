@@ -2,15 +2,985 @@
 import "../styles/global.css";
 ---
 
-<html lang="en">
+<!doctype html>
+<html lang="th">
   <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ร้านทำเล็บคลองหก | Phonnapa Studio – ใกล้ราชมงคล ราคานักศึกษา</title>
+    <meta
+      name="description"
+      content="Phonnapa Studio ร้านทำเล็บคลองหกใกล้ราชมงคล ช่างมือโปร เล็บเจล PVC เพ้นท์เล็บ ต่อเล็บ ทำขนตา ราคานักศึกษา เปิดทุกวัน"
+    />
+    <meta
+      name="keywords"
+      content="ร้านทำเล็บคลองหก, ทำเล็บใกล้ราชมงคลคลองหก, เล็บเจลคลองหก, ร้านบิวตี้คลองหก, ร้านเพ้นท์เล็บราคาถูก"
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --color-primary: #f78cbc;
+        --color-primary-light: #e8d9f1;
+        --color-accent: #ffadc3;
+        --color-accent-light: #fbcff4;
+        --color-bg: #fff9fb;
+        --color-bg-soft: #f5f0fa;
+      }
+
+      body {
+        font-family: "Prompt", sans-serif;
+        background-color: var(--color-bg);
+      }
+
+      .bg-primary {
+        background-color: var(--color-primary);
+      }
+      .bg-primary-light {
+        background-color: var(--color-primary-light);
+      }
+      .bg-accent {
+        background-color: var(--color-accent);
+      }
+      .bg-accent-light {
+        background-color: var(--color-accent-light);
+      }
+      .bg-soft {
+        background-color: var(--color-bg-soft);
+      }
+
+      .text-primary {
+        color: var(--color-primary);
+      }
+      .text-accent {
+        color: var(--color-accent);
+      }
+
+      .border-primary {
+        border-color: var(--color-primary);
+      }
+      .border-accent {
+        border-color: var(--color-accent);
+      }
+
+      .gradient-bg {
+        background: linear-gradient(
+          135deg,
+          var(--color-primary-light) 0%,
+          var(--color-accent-light) 100%
+        );
+      }
+
+      .hero-gradient {
+        background: linear-gradient(
+          135deg,
+          var(--color-bg) 0%,
+          var(--color-primary-light) 50%,
+          var(--color-accent-light) 100%
+        );
+      }
+
+      .glass-effect {
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .bounce-gentle {
+        animation: bounce-gentle 2s infinite;
+      }
+
+      @keyframes bounce-gentle {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-10px);
+        }
+        60% {
+          transform: translateY(-5px);
+        }
+      }
+
+      .hover-scale {
+        transition: transform 0.3s ease;
+      }
+
+      .hover-scale:hover {
+        transform: scale(1.05);
+      }
+
+      .star-rating {
+        color: #ffd700;
+        text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+      }
+
+      .service-card {
+        background: linear-gradient(145deg, #ffffff, var(--color-bg-soft));
+        box-shadow: 0 10px 30px rgba(247, 140, 188, 0.15);
+        transition: all 0.3s ease;
+      }
+
+      .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(247, 140, 188, 0.25);
+      }
+    </style>
   </head>
-  <body>
-    <h1 class="text-red-500">Astro</h1>
+  <body class="text-gray-800">
+    <!-- Hero Section -->
+    <section
+      class="hero-gradient min-h-screen flex items-center justify-center relative overflow-hidden"
+    >
+      <div class="absolute inset-0 opacity-10">
+        <div
+          class="absolute top-10 left-10 w-32 h-32 bg-primary rounded-full blur-3xl"
+        >
+        </div>
+        <div
+          class="absolute bottom-10 right-10 w-40 h-40 bg-accent rounded-full blur-3xl"
+        >
+        </div>
+        <div
+          class="absolute top-1/2 left-1/3 w-24 h-24 bg-accent-light rounded-full blur-2xl"
+        >
+        </div>
+      </div>
+
+      <div class="container mx-auto px-4 text-center relative z-10">
+        <div class="max-w-4xl mx-auto">
+          <h1
+            class="text-4xl md:text-6xl font-bold mb-6 text-gray-800"
+            data-aos="fade-down"
+            data-aos-duration="1000"
+          >
+            <span class="text-primary">ร้านทำเล็บคลองหก</span><br />
+            ใกล้ราชมงคล – เล็บสวยในราคาที่คุ้มค่า
+          </h1>
+
+          <p
+            class="text-xl md:text-2xl mb-8 text-gray-600 font-medium"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            บริการครบวงจร ช่างมือโปร รับประกันความสวย
+          </p>
+
+          <div class="mb-12" data-aos="zoom-in" data-aos-delay="400">
+            <button
+              class="bg-primary hover:bg-pink-600 text-white font-bold py-4 px-8 rounded-full text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 bounce-gentle"
+            >
+              <i class="fas fa-calendar-alt mr-2"></i>
+              จองคิวเลย - รับส่วนลด 20%
+            </button>
+          </div>
+
+          <!-- Gallery Placeholder -->
+          <div
+            class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto"
+            data-aos="fade-up"
+            data-aos-delay="600"
+          >
+            <div class="bg-white rounded-lg p-4 shadow-lg glass-effect">
+              <div
+                class="bg-primary-light h-24 rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-hand-sparkles text-primary text-2xl"></i>
+              </div>
+            </div>
+            <div class="bg-white rounded-lg p-4 shadow-lg glass-effect">
+              <div
+                class="bg-accent-light h-24 rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-gem text-accent text-2xl"></i>
+              </div>
+            </div>
+            <div class="bg-white rounded-lg p-4 shadow-lg glass-effect">
+              <div
+                class="bg-primary-light h-24 rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-palette text-primary text-2xl"></i>
+              </div>
+            </div>
+            <div class="bg-white rounded-lg p-4 shadow-lg glass-effect">
+              <div
+                class="bg-accent-light h-24 rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-star text-accent text-2xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-4">
+        <h2
+          class="text-4xl font-bold text-center mb-12 text-gray-800"
+          data-aos="fade-up"
+        >
+          <span class="text-primary">บริการของเรา</span>
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          <!-- Nail Services -->
+          <div class="service-card rounded-2xl p-8" data-aos="fade-right">
+            <h3 class="text-2xl font-bold mb-6 text-primary flex items-center">
+              <i class="fas fa-hand-sparkles mr-3"></i>
+              บริการทำเล็บ
+            </h3>
+            <div class="space-y-3">
+              <div
+                class="flex justify-between items-center py-2 border-b border-gray-200"
+              >
+                <span>ทาเจลสีพื้น</span>
+                <span class="font-bold text-primary">200-250 บาท</span>
+              </div>
+              <div
+                class="flex justify-between items-center py-2 border-b border-gray-200"
+              >
+                <span>ทาเจลกลิตเตอร์</span>
+                <span class="font-bold text-primary">250-300 บาท</span>
+              </div>
+              <div
+                class="flex justify-between items-center py-2 border-b border-gray-200"
+              >
+                <span>ทาเจลลูกแก้ว / สีขัดผง</span>
+                <span class="font-bold text-primary">300-350 บาท</span>
+              </div>
+              <div
+                class="flex justify-between items-center py-2 border-b border-gray-200"
+              >
+                <span>งานฝังจิวเวลรี่ / เพ้นท์ / ปั้นนูน</span>
+                <span class="font-bold text-primary">เริ่มต้น 10 บาท/นิ้ว</span>
+              </div>
+              <div
+                class="flex justify-between items-center py-2 border-b border-gray-200"
+              >
+                <span>เสริมหน้าเล็บ</span>
+                <span class="font-bold text-primary">100 บาท</span>
+              </div>
+              <div
+                class="flex justify-between items-center py-2 border-b border-gray-200"
+              >
+                <span>ต่อเล็บ PVC</span>
+                <span class="font-bold text-primary">250 บาท</span>
+              </div>
+              <div
+                class="flex justify-between items-center py-2 border-b border-gray-200"
+              >
+                <span>ถอดเล็บ PVC</span>
+                <span class="font-bold text-primary">150 บาท</span>
+              </div>
+              <div
+                class="flex justify-between items-center py-2 border-b border-gray-200"
+              >
+                <span>ล้างสีเจล</span>
+                <span class="font-bold text-primary">100 บาท</span>
+              </div>
+              <div
+                class="flex justify-between items-center py-2 border-b border-gray-200"
+              >
+                <span>ตัดหนังมือ/เท้า</span>
+                <span class="font-bold text-primary">150-250 บาท</span>
+              </div>
+              <div
+                class="flex justify-between items-center py-2 border-b border-gray-200"
+              >
+                <span>สปามือ 5 ขั้นตอน</span>
+                <span class="font-bold text-primary">250 บาท</span>
+              </div>
+              <div class="flex justify-between items-center py-2">
+                <span>สปาเท้า 6 ขั้นตอน</span>
+                <span class="font-bold text-primary">450 บาท</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Eyelash Services -->
+          <div class="service-card rounded-2xl p-8" data-aos="fade-left">
+            <h3 class="text-2xl font-bold mb-6 text-primary flex items-center">
+              <i class="fas fa-eye mr-3"></i>
+              บริการขนตา
+            </h3>
+            <div class="space-y-3">
+              <div
+                class="flex justify-between items-center py-2 border-b border-gray-200"
+              >
+                <span>ลิฟต์ขนตา</span>
+                <span class="font-bold text-primary">300 บาท</span>
+              </div>
+              <div class="flex justify-between items-center py-2">
+                <span>ลิฟต์ขนคิ้ว</span>
+                <span class="font-bold text-primary">100 บาท</span>
+              </div>
+            </div>
+
+            <!-- Special Offer Card -->
+            <div
+              class="mt-8 bg-gradient-to-r from-pink-100 to-purple-100 p-6 rounded-xl border-2 border-dashed border-primary"
+            >
+              <h4 class="font-bold text-primary mb-3 flex items-center">
+                <i class="fas fa-gift mr-2"></i>
+                แพ็คเกจพิเศษ
+              </h4>
+              <p class="text-gray-700">
+                จองบริการครบ 500 บาท รับฟรี! ทาเล็บมือสีพื้น
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Highlights Section -->
+    <section class="py-16 bg-soft">
+      <div class="container mx-auto px-4">
+        <h2
+          class="text-4xl font-bold text-center mb-12 text-gray-800"
+          data-aos="fade-up"
+        >
+          <span class="text-primary">จุดเด่นของเรา</span>
+        </h2>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div class="text-center" data-aos="zoom-in" data-aos-delay="100">
+            <div
+              class="bg-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
+            >
+              <i class="fas fa-user-graduate text-white text-2xl"></i>
+            </div>
+            <h3 class="font-bold text-xl mb-2 text-gray-800">ช่างมืออาชีพ</h3>
+            <p class="text-gray-600">ประสบการณ์ 5+ ปี</p>
+          </div>
+
+          <div class="text-center" data-aos="zoom-in" data-aos-delay="200">
+            <div
+              class="bg-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
+            >
+              <i class="fas fa-shield-alt text-white text-2xl"></i>
+            </div>
+            <h3 class="font-bold text-xl mb-2 text-gray-800">อุปกรณ์คุณภาพ</h3>
+            <p class="text-gray-600">สะอาด ปลอดภัย</p>
+          </div>
+
+          <div class="text-center" data-aos="zoom-in" data-aos-delay="300">
+            <div
+              class="bg-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
+            >
+              <i class="fas fa-map-marker-alt text-white text-2xl"></i>
+            </div>
+            <h3 class="font-bold text-xl mb-2 text-gray-800">ทำเลสะดวก</h3>
+            <p class="text-gray-600">ใกล้ราชมงคลคลองหก</p>
+          </div>
+
+          <div class="text-center" data-aos="zoom-in" data-aos-delay="400">
+            <div
+              class="bg-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
+            >
+              <i class="fas fa-dollar-sign text-white text-2xl"></i>
+            </div>
+            <h3 class="font-bold text-xl mb-2 text-gray-800">ราคาเป็นกันเอง</h3>
+            <p class="text-gray-600">เหมาะกับนักศึกษา</p>
+          </div>
+
+          <div class="text-center" data-aos="zoom-in" data-aos-delay="500">
+            <div
+              class="bg-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
+            >
+              <i class="fas fa-clock text-white text-2xl"></i>
+            </div>
+            <h3 class="font-bold text-xl mb-2 text-gray-800">เปิดทุกวัน</h3>
+            <p class="text-gray-600">9:00–20:00</p>
+          </div>
+
+          <div class="text-center" data-aos="zoom-in" data-aos-delay="600">
+            <div
+              class="bg-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
+            >
+              <i class="fas fa-heart text-white text-2xl"></i>
+            </div>
+            <h3 class="font-bold text-xl mb-2 text-gray-800">บริการอบอุ่น</h3>
+            <p class="text-gray-600">ใส่ใจทุกรายละเอียด</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Atmosphere Section -->
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+          <h2 class="text-4xl font-bold mb-6 text-gray-800" data-aos="fade-up">
+            <span class="text-primary">บรรยากาศร้าน</span>
+          </h2>
+          <p
+            class="text-xl mb-12 text-gray-600"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            ร้านสะอาด กลิ่นหอม มีเพลงเบา ๆ บริการอบอุ่น
+          </p>
+
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+            <div
+              class="bg-primary-light rounded-xl p-8 hover-scale"
+              data-aos="zoom-in"
+              data-aos-delay="100"
+            >
+              <i class="fas fa-couch text-primary text-4xl mb-4"></i>
+              <h3 class="font-bold text-lg text-gray-800">พื้นที่นั่งสบาย</h3>
+            </div>
+            <div
+              class="bg-accent-light rounded-xl p-8 hover-scale"
+              data-aos="zoom-in"
+              data-aos-delay="200"
+            >
+              <i class="fas fa-music text-accent text-4xl mb-4"></i>
+              <h3 class="font-bold text-lg text-gray-800">เพลงบรรเลง</h3>
+            </div>
+            <div
+              class="bg-primary-light rounded-xl p-8 hover-scale"
+              data-aos="zoom-in"
+              data-aos-delay="300"
+            >
+              <i class="fas fa-air-freshener text-primary text-4xl mb-4"></i>
+              <h3 class="font-bold text-lg text-gray-800">กลิ่นหอมผ่อนคลาย</h3>
+            </div>
+            <div
+              class="bg-accent-light rounded-xl p-8 hover-scale"
+              data-aos="zoom-in"
+              data-aos-delay="400"
+            >
+              <i class="fas fa-wifi text-accent text-4xl mb-4"></i>
+              <h3 class="font-bold text-lg text-gray-800">WiFi ฟรี</h3>
+            </div>
+            <div
+              class="bg-primary-light rounded-xl p-8 hover-scale"
+              data-aos="zoom-in"
+              data-aos-delay="500"
+            >
+              <i class="fas fa-coffee text-primary text-4xl mb-4"></i>
+              <h3 class="font-bold text-lg text-gray-800">เครื่องดื่มฟรี</h3>
+            </div>
+            <div
+              class="bg-accent-light rounded-xl p-8 hover-scale"
+              data-aos="zoom-in"
+              data-aos-delay="600"
+            >
+              <i class="fas fa-snowflake text-accent text-4xl mb-4"></i>
+              <h3 class="font-bold text-lg text-gray-800">แอร์เย็นสบาย</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Promotion Section -->
+    <section class="py-16 gradient-bg">
+      <div class="container mx-auto px-4">
+        <h2
+          class="text-4xl font-bold text-center mb-12 text-gray-800"
+          data-aos="fade-up"
+        >
+          <span class="text-white">โปรโมชั่นพิเศษ</span>
+        </h2>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          <div
+            class="bg-white rounded-2xl p-6 shadow-lg text-center hover-scale"
+            data-aos="bounce"
+            data-aos-delay="100"
+          >
+            <div class="text-4xl mb-4">🎉</div>
+            <h3 class="font-bold text-lg mb-2 text-primary">ลูกค้าใหม่</h3>
+            <p class="text-gray-600">ลด 20% ทุกบริการ</p>
+          </div>
+
+          <div
+            class="bg-white rounded-2xl p-6 shadow-lg text-center hover-scale"
+            data-aos="bounce"
+            data-aos-delay="200"
+          >
+            <div class="text-4xl mb-4">🎓</div>
+            <h3 class="font-bold text-lg mb-2 text-primary">นักศึกษา</h3>
+            <p class="text-gray-600">แสดงบัตร นศ. รับส่วนลด 10%</p>
+          </div>
+
+          <div
+            class="bg-white rounded-2xl p-6 shadow-lg text-center hover-scale"
+            data-aos="bounce"
+            data-aos-delay="300"
+          >
+            <div class="text-4xl mb-4">👯‍♀️</div>
+            <h3 class="font-bold text-lg mb-2 text-primary">มากับเพื่อน</h3>
+            <p class="text-gray-600">ลดเพิ่ม 50 บาท</p>
+          </div>
+
+          <div
+            class="bg-white rounded-2xl p-6 shadow-lg text-center hover-scale"
+            data-aos="bounce"
+            data-aos-delay="400"
+          >
+            <div class="text-4xl mb-4">💅</div>
+            <h3 class="font-bold text-lg mb-2 text-primary">รีฟิลเจล</h3>
+            <p class="text-gray-600">ภายใน 2 สัปดาห์: 199 บาท</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-4">
+        <h2
+          class="text-4xl font-bold text-center mb-6 text-gray-800"
+          data-aos="fade-up"
+        >
+          <span class="text-primary">รีวิวลูกค้า</span>
+        </h2>
+
+        <div class="text-center mb-12" data-aos="fade-up" data-aos-delay="200">
+          <div class="text-6xl star-rating mb-4">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+          <p class="text-2xl font-bold text-gray-800">4.8/5</p>
+          <p class="text-gray-600">จากรีวิว 127 คน</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div
+            class="bg-soft rounded-2xl p-6 shadow-lg"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
+            <div class="flex items-center mb-4">
+              <div
+                class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold mr-4"
+              >
+                น
+              </div>
+              <div>
+                <h4 class="font-bold text-gray-800">น้องแนน</h4>
+                <p class="text-sm text-gray-600">นศ.ปี 2</p>
+              </div>
+            </div>
+            <div class="text-yellow-400 mb-2">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="text-gray-700 italic">
+              "ครั้งแรกที่มา ประทับใจมาก เล็บสวย ทนนาน ราคาไม่แพง จะกลับมาใหม่"
+            </p>
+          </div>
+
+          <div
+            class="bg-soft rounded-2xl p-6 shadow-lg"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
+            <div class="flex items-center mb-4">
+              <div
+                class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold mr-4"
+              >
+                อ
+              </div>
+              <div>
+                <h4 class="font-bold text-gray-800">คุณแอน</h4>
+                <p class="text-sm text-gray-600">ลูกค้าประจำ</p>
+              </div>
+            </div>
+            <div class="text-yellow-400 mb-2">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="text-gray-700 italic">
+              "สวยมาก ราคาดี ใกล้มหาลัย เดินทางสะดวกมาก ช่างทำละเอียดมาก"
+            </p>
+          </div>
+
+          <div
+            class="bg-soft rounded-2xl p-6 shadow-lg"
+            data-aos="fade-up"
+            data-aos-delay="300"
+          >
+            <div class="flex items-center mb-4">
+              <div
+                class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold mr-4"
+              >
+                ม
+              </div>
+              <div>
+                <h4 class="font-bold text-gray-800">คุณมิ้ม</h4>
+                <p class="text-sm text-gray-600">ลูกค้าใหม่</p>
+              </div>
+            </div>
+            <div class="text-yellow-400 mb-2">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <p>ช่างใจเย็น ทำละเอียด บรรยากาศร้านดี มาแล้วรู้สึกผ่อนคลาย</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="py-16 bg-soft">
+      <div class="container mx-auto px-4">
+        <h2
+          class="text-4xl font-bold text-center mb-12 text-gray-800"
+          data-aos="fade-up"
+        >
+          <span class="text-primary">ติดต่อเรา</span>
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+          <!-- Contact Information -->
+          <div data-aos="fade-right">
+            <div class="bg-white rounded-2xl p-8 shadow-lg">
+              <h3 class="text-2xl font-bold mb-6 text-primary">ข้อมูลติดต่อ</h3>
+
+              <div class="space-y-6">
+                <div class="flex items-start">
+                  <div
+                    class="bg-primary w-12 h-12 rounded-full flex items-center justify-center mr-4 flex-shrink-0"
+                  >
+                    <i class="fas fa-map-marker-alt text-white"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-gray-800 mb-1">ที่อยู่</h4>
+                    <p class="text-gray-600">
+                      คลองหก ใกล้มหาวิทยาลัยราชมงคลธัญบุรี
+                    </p>
+                    <p class="text-sm text-gray-500 mt-1">
+                      รถเมล์สาย 29, 59 ลงป้ายราชมงคล
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-start">
+                  <div
+                    class="bg-primary w-12 h-12 rounded-full flex items-center justify-center mr-4 flex-shrink-0"
+                  >
+                    <i class="fas fa-phone text-white"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-gray-800 mb-1">โทรศัพท์</h4>
+                    <p class="text-gray-600">0XX-XXX-XXXX</p>
+                    <p class="text-sm text-gray-500 mt-1">
+                      รับสายทุกวัน 9:00-20:00
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-start">
+                  <div
+                    class="bg-primary w-12 h-12 rounded-full flex items-center justify-center mr-4 flex-shrink-0"
+                  >
+                    <i class="fab fa-line text-white"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-gray-800 mb-1">LINE</h4>
+                    <p class="text-gray-600">@nailshopklonghok</p>
+                    <p class="text-sm text-gray-500 mt-1">
+                      จองคิวผ่าน LINE ได้ทุกวัน
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-start">
+                  <div
+                    class="bg-primary w-12 h-12 rounded-full flex items-center justify-center mr-4 flex-shrink-0"
+                  >
+                    <i class="fas fa-clock text-white"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-gray-800 mb-1">เวลาเปิด-ปิด</h4>
+                    <p class="text-gray-600">จันทร์ - อาทิตย์</p>
+                    <p class="text-primary font-bold">9:00 - 20:00</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Actions -->
+              <div class="mt-8 grid grid-cols-2 gap-4">
+                <button
+                  class="bg-primary hover:bg-pink-600 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300"
+                >
+                  <i class="fas fa-phone mr-2"></i>
+                  โทรเลย
+                </button>
+                <button
+                  class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300"
+                >
+                  <i class="fab fa-line mr-2"></i>
+                  LINE
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Map -->
+          <div data-aos="fade-left">
+            <div class="bg-white rounded-2xl p-8 shadow-lg h-full">
+              <h3 class="text-2xl font-bold mb-6 text-primary">แผนที่</h3>
+
+              <!-- Map Placeholder -->
+              <div
+                class="bg-gray-200 rounded-lg h-64 flex items-center justify-center mb-6"
+              >
+                <div class="text-center">
+                  <i class="fas fa-map-marked-alt text-gray-400 text-4xl mb-4"
+                  ></i>
+                  <p class="text-gray-600">Google Maps</p>
+                  <p class="text-sm text-gray-500">คลองหก ใกล้ราชมงคลธัญบุรี</p>
+                </div>
+              </div>
+
+              <!-- Directions -->
+              <div class="space-y-3">
+                <h4 class="font-bold text-gray-800">วิธีการเดินทาง:</h4>
+                <div class="flex items-center text-gray-600">
+                  <i class="fas fa-bus text-primary mr-3"></i>
+                  <span>รถเมล์สาย 29, 59 ลงป้ายราชมงคล</span>
+                </div>
+                <div class="flex items-center text-gray-600">
+                  <i class="fas fa-car text-primary mr-3"></i>
+                  <span>มีที่จอดรถหน้าร้าน</span>
+                </div>
+                <div class="flex items-center text-gray-600">
+                  <i class="fas fa-motorcycle text-primary mr-3"></i>
+                  <span>รถจักรยานยนต์รับจ้างผ่าน</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+      <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-3 gap-8">
+          <div>
+            <h3 class="text-2xl font-bold mb-4 text-primary">
+              Phonnapa Studio
+            </h3>
+            <p class="text-gray-300 mb-4">
+              ร้านทำเล็บคลองหก ใกล้ราชมงคลธัญบุรี
+            </p>
+            <p class="text-gray-300">ช่างมือโปร บริการอบอุ่น ราคาเป็นกันเอง</p>
+          </div>
+
+          <div>
+            <h4 class="font-bold mb-4 text-primary">บริการหลัก</h4>
+            <ul class="space-y-2 text-gray-300">
+              <li>• ทาเจล ต่อเล็บ</li>
+              <li>• เพ้นท์เล็บ ลูกแก้ว</li>
+              <li>• ลิฟต์ขนตา ขนคิ้ว</li>
+              <li>• สปามือ สปาเท้า</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="font-bold mb-4 text-primary">ติดตามเรา</h4>
+            <div class="flex space-x-4">
+              <a
+                href="#"
+                class="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:bg-pink-600 transition-colors"
+              >
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a
+                href="#"
+                class="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:bg-pink-600 transition-colors"
+              >
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a
+                href="#"
+                class="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:bg-pink-600 transition-colors"
+              >
+                <i class="fab fa-line"></i>
+              </a>
+              <a
+                href="#"
+                class="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:bg-pink-600 transition-colors"
+              >
+                <i class="fab fa-tiktok"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+          <p class="text-gray-400">
+            &copy; 2025 Phonnapa Studio. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Floating Action Button -->
+    <div class="fixed bottom-6 right-6 z-50">
+      <button
+        class="bg-primary hover:bg-pink-600 text-white w-16 h-16 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 transform hover:scale-110 bounce-gentle"
+      >
+        <i class="fas fa-calendar-alt text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module">
+      import { initAOS } from "/src/scripts/aos-init.js";
+
+      window.addEventListener("DOMContentLoaded", () => {
+        initAOS();
+      });
+    </script>
+
+    <script>
+      // Floating button click handler
+      document
+        .querySelector(".fixed button")
+        .addEventListener("click", function () {
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        });
+
+      // Smooth scrolling for internal links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        });
+      });
+
+      // Add entrance animation to service cards
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.style.transform = "translateY(0)";
+            entry.target.style.opacity = "1";
+          }
+        });
+      }, observerOptions);
+
+      // Observe all service cards
+      document.querySelectorAll(".service-card").forEach((card) => {
+        card.style.transform = "translateY(20px)";
+        card.style.opacity = "0";
+        card.style.transition = "all 0.6s ease";
+        observer.observe(card);
+      });
+
+      // Add parallax effect to hero section
+      window.addEventListener("scroll", () => {
+        const scrolled = window.pageYOffset;
+        const parallax = document.querySelector(".hero-gradient");
+        if (parallax) {
+          const speed = scrolled * 0.5;
+          parallax.style.transform = `translateY(${speed}px)`;
+        }
+      });
+
+      // Add loading animation
+      window.addEventListener("load", () => {
+        document.body.classList.add("loaded");
+      });
+    </script>
+
+    <style>
+      .loaded {
+        animation: fadeIn 0.5s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* Additional responsive styles */
+      @media (max-width: 768px) {
+        .hero-gradient h1 {
+          font-size: 2.5rem;
+          line-height: 1.2;
+        }
+
+        .service-card {
+          margin-bottom: 1rem;
+        }
+
+        .grid {
+          gap: 1rem;
+        }
+      }
+
+      /* Scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--color-bg-soft);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--color-primary);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--color-accent);
+      }
+    </style>
   </body>
 </html>
