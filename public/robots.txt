@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://phonnapastudio.github.io/pnp-landing/sitemap-index.xml
+Sitemap: https://phonnapastudio.github.io/pnp-landing/sitemap.xml
