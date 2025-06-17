@@ -1,3 +1,5 @@
 @import "tailwindcss";
 
-
+.active {
+  @apply text-primary font-semibold underline;
+}
