@@ -162,6 +162,38 @@ import "../styles/global.css";
         );
         backdrop-filter: blur(10px);
       }
+
+      @keyframes pulse-slow {
+        0%,
+        100% {
+          opacity: 0.3;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(1.1);
+        }
+      }
+
+      @keyframes pulse-slower {
+        0%,
+        100% {
+          opacity: 0.2;
+          transform: scale(0.95);
+        }
+        50% {
+          opacity: 0.35;
+          transform: scale(1.05);
+        }
+      }
+
+      .animate-pulse-slow {
+        animation: pulse-slow 6s ease-in-out infinite;
+      }
+
+      .animate-pulse-slower {
+        animation: pulse-slower 10s ease-in-out infinite;
+      }
     </style>
   </head>
 
@@ -190,43 +222,50 @@ import "../styles/global.css";
             <a
               href="#hero"
               class="nav-link text-gray-700 hover:text-primary transition"
-              >หน้าหลัก</a>
+              >หน้าหลัก</a
+            >
           </li>
           <li>
             <a
               href="#services"
               class="nav-link text-gray-700 hover:text-primary transition"
-              >บริการ</a>
+              >บริการ</a
+            >
           </li>
           <li>
             <a
               href="#highlights"
               class="nav-link text-gray-700 hover:text-primary transition"
-              >จุดเด่น</a>
+              >จุดเด่น</a
+            >
           </li>
           <li>
             <a
               href="#atmosphere"
               class="nav-link text-gray-700 hover:text-primary transition"
-              >บรรยากาศ</a>
+              >บรรยากาศ</a
+            >
           </li>
           <li>
             <a
               href="#promotions"
               class="nav-link text-gray-700 hover:text-primary transition"
-              >โปรโมชั่น</a>
+              >โปรโมชั่น</a
+            >
           </li>
           <li>
             <a
               href="#reviews"
               class="nav-link text-gray-700 hover:text-primary transition"
-              >รีวิว</a>
+              >รีวิว</a
+            >
           </li>
           <li>
             <a
               href="#contact"
               class="nav-link text-gray-700 hover:text-primary transition"
-              >ติดต่อ</a>
+              >ติดต่อ</a
+            >
           </li>
         </ul>
 
@@ -257,43 +296,49 @@ import "../styles/global.css";
             <a
               href="#hero"
               class="block text-gray-700 hover:text-primary transition"
-              >หน้าหลัก</a>
+              >หน้าหลัก</a
+            >
           </li>
           <li>
             <a
               href="#services"
               class="block text-gray-700 hover:text-primary transition"
-              >บริการ</a>
+              >บริการ</a
+            >
           </li>
           <li>
             <a
               href="#highlights"
               class="block text-gray-700 hover:text-primary transition"
-              >จุดเด่น</a>
+              >จุดเด่น</a
+            >
           </li>
           <li>
             <a
               href="#atmosphere"
               class="block text-gray-700 hover:text-primary transition"
-              >บรรยากาศ</a>
+              >บรรยากาศ</a
+            >
           </li>
           <li>
             <a
               href="#promotions"
               class="block text-gray-700 hover:text-primary transition"
-              >โปรโมชั่น</a>
+              >โปรโมชั่น</a
+            >
           </li>
           <li>
             <a
               href="#reviews"
-              class="block text-gray-700 hover:text-primary transition"
-              >รีวิว</a>
+              class="block text-gray-700 hover:text-primary transition">รีวิว</a
+            >
           </li>
           <li>
             <a
               href="#contact"
               class="block text-gray-700 hover:text-primary transition"
-              >ติดต่อ</a>
+              >ติดต่อ</a
+            >
           </li>
         </ul>
       </div>
@@ -304,7 +349,22 @@ import "../styles/global.css";
       class="hero-gradient min-h-screen flex items-center justify-center relative overflow-hidden"
       id="hero"
     >
-      <div class="absolute inset-0 bg-white bg-opacity-30"></div>
+      <div class="absolute inset-0 bg-white bg-opacity-30">
+        <div class="absolute inset-0 z-0 pointer-events-none">
+          <div
+            class="absolute top-10 left-10 w-56 h-56 bg-pink-200 opacity-40 rounded-full blur-3xl animate-pulse-slow"
+          >
+          </div>
+          <div
+            class="absolute bottom-20 right-20 w-72 h-72 bg-purple-300 opacity-30 rounded-full blur-3xl animate-pulse-slower"
+          >
+          </div>
+          <div
+            class="absolute top-1/2 left-1/3 w-40 h-40 bg-primary opacity-20 rounded-full blur-2xl animate-pulse"
+          >
+          </div>
+        </div>
+      </div>
       <div class="container mx-auto px-4 lg:px-10 py-16 relative z-10">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
           <!-- Hero Content -->
@@ -340,11 +400,13 @@ import "../styles/global.css";
                 class="inline-block bg-primary hover-primary text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
                 <i class="fas fa-calendar-alt mr-2"></i>
-                จองคิวเลย - รับส่วนลด 20%
+                จองคิวเลย - รับส่วนลด 5%
               </a>
               <a
-                href="tel:0XX-XXX-XXXX"
+                href="tel:0956658550"
                 class="inline-block border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <i class="fas fa-phone mr-2"></i>
                 โทรเลย
@@ -357,7 +419,7 @@ import "../styles/global.css";
             <div class="grid grid-cols-2 gap-4">
               <div class="hero-image rounded-2xl p-4 card-hover">
                 <img
-                  src="/images/nail1.jpg"
+                  src="/images/hero1.jpg"
                   alt="เล็บเจลสวย"
                   class="w-full h-48 object-cover rounded-xl"
                   onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=300&h=300&fit=crop'"
@@ -365,7 +427,7 @@ import "../styles/global.css";
               </div>
               <div class="hero-image rounded-2xl p-4 card-hover">
                 <img
-                  src="/images/nail2.jpg"
+                  src="/images/hero2.jpg"
                   alt="เล็บกลิตเตอร์"
                   class="w-full h-48 object-cover rounded-xl"
                   onerror="this.src='https://images.unsplash.com/photo-1604654894610-df63bc536371?w=300&h=300&fit=crop'"
@@ -373,7 +435,7 @@ import "../styles/global.css";
               </div>
               <div class="hero-image rounded-2xl p-4 card-hover">
                 <img
-                  src="/images/nail3.jpg"
+                  src="/images/hero3.jpg"
                   alt="เล็บลูกแก้ว"
                   class="w-full h-48 object-cover rounded-xl"
                   onerror="this.src='https://images.unsplash.com/photo-1515688594390-b649af70d282?w=300&h=300&fit=crop'"
@@ -381,7 +443,7 @@ import "../styles/global.css";
               </div>
               <div class="hero-image rounded-2xl p-4 card-hover">
                 <img
-                  src="/images/nail4.jpg"
+                  src="/images/hero4.jpg"
                   alt="เล็บเพ้นท์"
                   class="w-full h-48 object-cover rounded-xl"
                   onerror="this.src='https://images.unsplash.com/photo-1607779097040-26e80aa78e66?w=300&h=300&fit=crop'"
@@ -394,8 +456,25 @@ import "../styles/global.css";
     </section>
 
     <!-- Service Section -->
-    <section class="py-20 bg-white" id="services">
-      <div class="container mx-auto px-4 lg:px-10">
+    <section class="relative py-20 bg-white" id="services">
+      <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <!-- กลมกลางซ้าย -->
+        <div
+          class="absolute top-1/3 left-0 w-60 h-60 bg-pink-200 opacity-30 rounded-full blur-3xl animate-pulse-slow"
+        >
+        </div>
+        <!-- กลมล่างขวา -->
+        <div
+          class="absolute bottom-0 right-10 w-80 h-80 bg-purple-100 opacity-20 rounded-full blur-3xl animate-pulse-slower"
+        >
+        </div>
+        <!-- กลมบนขวา -->
+        <div
+          class="absolute top-0 right-0 w-40 h-40 bg-accent opacity-20 rounded-full blur-2xl animate-pulse"
+        >
+        </div>
+      </div>
+      <div class="relative z-10 container mx-auto px-4 lg:px-10">
         <div class="text-center mb-16 animate__animated animate__fadeInUp">
           <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
             บริการของเรา
@@ -567,8 +646,26 @@ import "../styles/global.css";
     </section>
 
     <!-- Highlight Section -->
-    <section class="py-20 bg-soft" id="highlights">
-      <div class="container mx-auto px-4 lg:px-10">
+    <section class="relative py-20 bg-soft" id="highlights">
+      <!-- ลูกกลมระยิบ -->
+      <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <!-- บนซ้าย -->
+        <div
+          class="absolute top-0 left-0 w-60 h-60 bg-pink-500 opacity-30 rounded-full blur-3xl animate-pulse-slow"
+        >
+        </div>
+        <!-- กลาง -->
+        <div
+          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-pink-500 opacity-20 rounded-full blur-3xl animate-pulse-slower"
+        >
+        </div>
+        <!-- ล่างขวา -->
+        <div
+          class="absolute bottom-0 right-0 w-52 h-52 bg-pink-500 opacity-25 rounded-full blur-2xl animate-pulse"
+        >
+        </div>
+      </div>
+      <div class="container relative z-10 mx-auto px-4 lg:px-10">
         <div class="text-center mb-16 animate__animated animate__fadeInUp">
           <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
             ทำไมต้องเลือกเรา?
@@ -657,8 +754,25 @@ import "../styles/global.css";
     </section>
 
     <!-- Atmosphere Section -->
-    <section class="py-20 bg-white" id="atmosphere">
-      <div class="container mx-auto px-4 lg:px-10">
+    <section class="relative py-20 bg-white" id="atmosphere">
+      <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <!-- มุมบนขวา -->
+        <div
+          class="absolute top-[-60px] right-[-40px] w-72 h-72 bg-pink-100 opacity-30 rounded-full blur-3xl animate-pulse-slow"
+        >
+        </div>
+        <!-- มุมซ้ายกลาง -->
+        <div
+          class="absolute top-1/3 left-[-60px] w-60 h-60 bg-primary-light opacity-20 rounded-full blur-2xl animate-pulse"
+        >
+        </div>
+        <!-- มุมล่างซ้ายเล็ก -->
+        <div
+          class="absolute bottom-[-50px] left-20 w-36 h-36 bg-accent-light opacity-25 rounded-full blur-3xl animate-pulse-slower"
+        >
+        </div>
+      </div>
+      <div class="relative z-10 container mx-auto px-4 lg:px-10">
         <div class="text-center mb-16 animate__animated animate__fadeInUp">
           <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
             บรรยากาศร้าน
@@ -674,7 +788,7 @@ import "../styles/global.css";
             class="overflow-hidden rounded-2xl shadow-lg card-hover animate__animated animate__fadeInUp"
           >
             <img
-              src="/images/shop1.jpg"
+              src="/images/asmos1.jpg"
               alt="บรรยากาศร้าน 1"
               class="w-full h-64 object-cover"
               onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1592861956120-e524fc739696?auto=format&fit=crop&w=600&q=80'"
@@ -686,55 +800,55 @@ import "../styles/global.css";
             class="overflow-hidden rounded-2xl shadow-lg card-hover animate__animated animate__fadeInUp"
           >
             <img
-              src="/images/shop2.jpg"
+              src="/images/asmos2.jpg"
               alt="บรรยากาศร้าน 2"
               class="w-full h-64 object-cover"
               onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1592861956120-e524fc739696?auto=format&fit=crop&w=600&q=80'"
             />
           </div>
 
-          <!-- Shop 3 -->
+          <!-- asmos 3 -->
           <div
             class="overflow-hidden rounded-2xl shadow-lg card-hover animate__animated animate__fadeInUp"
           >
             <img
-              src="/images/shop3.jpg"
+              src="/images/asmos3.jpg"
               alt="บรรยากาศร้าน 3"
               class="w-full h-64 object-cover"
               onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1615874959474-d609969a20ed?auto=format&fit=crop&w=600&q=80'"
             />
           </div>
 
-          <!-- Shop 4 -->
+          <!-- asmos 4 -->
           <div
             class="overflow-hidden rounded-2xl shadow-lg card-hover animate__animated animate__fadeInUp"
           >
             <img
-              src="/images/shop4.jpg"
+              src="/images/asmos4.jpg"
               alt="บรรยากาศร้าน 4"
               class="w-full h-64 object-cover"
               onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1615874959474-d609969a20ed?auto=format&fit=crop&w=600&q=80'"
             />
           </div>
 
-          <!-- Shop 5 -->
+          <!-- asmos 5 -->
           <div
             class="overflow-hidden rounded-2xl shadow-lg card-hover animate__animated animate__fadeInUp"
           >
             <img
-              src="/images/shop5.jpg"
+              src="/images/asmos5.jpg"
               alt="บรรยากาศร้าน 5"
               class="w-full h-64 object-cover"
               onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1615874959474-d609969a20ed?auto=format&fit=crop&w=600&q=80'"
             />
           </div>
 
-          <!-- Shop 6 -->
+          <!-- asmos 6 -->
           <div
             class="overflow-hidden rounded-2xl shadow-lg card-hover animate__animated animate__fadeInUp"
           >
             <img
-              src="/images/shop6.jpg"
+              src="/images/asmos6.jpg"
               alt="บรรยากาศร้าน 6"
               class="w-full h-64 object-cover"
               onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1592861956120-e524fc739696?auto=format&fit=crop&w=600&q=80'"
@@ -963,10 +1077,12 @@ import "../styles/global.css";
                   <div>
                     <h4 class="font-semibold">โทรศัพท์</h4>
                     <a
-                      href="tel:0XX-XXX-XXXX"
+                      href="tel:0956658550"
                       class="text-gray-600 hover:text-primary transition-colors"
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      0XX-XXX-XXXX
+                      095-665-8550
                     </a>
                   </div>
                 </div>
@@ -980,10 +1096,12 @@ import "../styles/global.css";
                   <div>
                     <h4 class="font-semibold">Line</h4>
                     <a
-                      href="https://line.me/ti/p/@nailshopklonghok"
+                      href="https://line.me/ti/p/@153nuymp"
                       class="text-gray-600 hover:text-primary transition-colors"
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      @nailshopklonghok
+                      @153nuymp
                     </a>
                   </div>
                 </div>
@@ -1008,7 +1126,11 @@ import "../styles/global.css";
                   </div>
                   <div>
                     <h4 class="font-semibold">การเดินทาง</h4>
-                    <p class="text-gray-600">ใกล้ราชมงคล / รถเมล์สาย XX</p>
+                    <p class="text-gray-600">
+                      สาย ปอ. 538 อนุสาวรีย์ชัยฯ (โรงพยาบาลสงฆ์) –
+                      ม.ราชมงคลธัญบุรี <br /> สาย ปอ. 1156 ฟิวเจอร์พาร์ค รังสิต –
+                      ม.ราชมงคลธัญบุรี
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1016,15 +1138,19 @@ import "../styles/global.css";
               <div class="mt-8 pt-8 border-t">
                 <div class="flex space-x-4 justify-center">
                   <a
-                    href="tel:0XX-XXX-XXXX"
+                    href="tel:0956658550"
                     class="bg-primary hover:bg-opacity-80 text-white px-6 py-3 rounded-full transition-all duration-300 flex items-center"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <i class="fas fa-phone mr-2"></i>
                     โทรเลย
                   </a>
                   <a
-                    href="https://line.me/ti/p/@nailshopklonghok"
+                    href="https://line.me/ti/p/@153nuymp"
                     class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full transition-all duration-300 flex items-center"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <i class="fab fa-line mr-2"></i>
                     Line
@@ -1068,20 +1194,26 @@ import "../styles/global.css";
             </p>
             <div class="flex space-x-4">
               <a
-                href="#"
+                href="https://www.facebook.com/profile.php?id=100092726523241#"
                 class="text-primary hover:text-accent transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <i class="fab fa-facebook text-2xl"></i>
               </a>
               <a
-                href="#"
+                href="https://www.instagram.com/phonnapa_studio/"
                 class="text-primary hover:text-accent transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <i class="fab fa-instagram text-2xl"></i>
               </a>
               <a
-                href="https://line.me/ti/p/@nailshopklonghok"
+                href="https://line.me/ti/p/@153nuymp"
                 class="text-primary hover:text-accent transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <i class="fab fa-line text-2xl"></i>
               </a>
@@ -1106,8 +1238,8 @@ import "../styles/global.css";
               <p>
                 <i class="fas fa-map-marker-alt mr-2"></i>คลองหก ใกล้ราชมงคล
               </p>
-              <p><i class="fas fa-phone mr-2"></i>0XX-XXX-XXXX</p>
-              <p><i class="fab fa-line mr-2"></i>@nailshopklonghok</p>
+              <p><i class="fas fa-phone mr-2"></i>095-665-8550</p>
+              <p><i class="fab fa-line mr-2"></i>@153nuymp</p>
               <p><i class="fas fa-clock mr-2"></i>9:00-20:00 ทุกวัน</p>
             </div>
           </div>
