@@ -363,27 +363,39 @@ import "../styles/global.css";
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        const targets = document.querySelectorAll("[data-animate]");
+        const isMobile = window.innerWidth < 768;
+        if (isMobile) {
+          // ปิด animation บนมือถือ
+          document.querySelectorAll("[data-animate]").forEach((el) => {
+            el.classList.remove("opacity-0");
+          });
+          console.log(145, "Mobile view detected, animations disabled.");
 
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                const el = entry.target;
-                const animation =
-                  (el as HTMLElement).dataset.animate || "fadeInUp";
-                el.classList.add("animate__animated", `animate__${animation}`);
-                el.classList.remove("opacity-0");
-                observer.unobserve(el); // ทำให้เล่นแค่ครั้งเดียว
-              }
-            });
-          },
-          {
-            threshold: 0.25,
-          }
-        );
+          return;
+        } else {
+          const targets = document.querySelectorAll("[data-animate]");
 
-        targets.forEach((el) => observer.observe(el));
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  const el = entry.target;
+                  const animation =
+                    (el as HTMLElement).dataset.animate || "fadeInUp";
+                  el.classList.add(
+                    "animate__animated",
+                    `animate__${animation}`
+                  );
+                  el.classList.remove("opacity-0");
+                  observer.unobserve(el);
+                }
+              });
+            },
+            { threshold: 0.25 }
+          );
+
+          targets.forEach((el) => observer.observe(el));
+        }
       });
     </script>
 
