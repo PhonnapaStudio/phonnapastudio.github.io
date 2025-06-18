@@ -78,10 +78,7 @@ import "../styles/global.css";
     <link rel="icon" type="image/png" href="/images/logo.webp" />
 
     <!-- Fonts & Libraries -->
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
-      rel="stylesheet"
-    />
+ 
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
       rel="stylesheet"
@@ -285,6 +282,7 @@ import "../styles/global.css";
       <i class="fab fa-line text-xl"></i>
     </a>
 
+    <!-- Schema.org JSON-LD -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -321,12 +319,20 @@ import "../styles/global.css";
       }
     </script>
 
+    <!-- Main Script -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        // -----------------------------
+        if (window.innerWidth >= 768) {
+          const link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.href =
+            "https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css";
+          document.head.appendChild(link);
+        }
+        // --------------------------
+        // Navigation active highlight
         const sections = document.querySelectorAll("section[id]");
         const navLinks = document.querySelectorAll(".nav-link");
-
         const navObserver = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
@@ -352,31 +358,18 @@ import "../styles/global.css";
           },
           { threshold: 0.3 }
         );
+        sections.forEach((section) => navObserver.observe(section));
 
-        sections.forEach((section) => {
-          navObserver.observe(section);
-        });
-
-        // -----------------------------
-      });
-    </script>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
+        // --------------------------
+        // Animate on Scroll (skip on mobile)
         const isMobile = window.innerWidth < 768;
+        const animatedEls = document.querySelectorAll("[data-animate]");
+
         if (isMobile) {
-          // ปิด animation บนมือถือ
-          document.querySelectorAll("[data-animate]").forEach((el) => {
-            el.classList.remove("opacity-0");
-          });
-          console.log(145, "Mobile view detected, animations disabled.");
-
-          return;
+          animatedEls.forEach((el) => el.classList.remove("opacity-0"));
         } else {
-          const targets = document.querySelectorAll("[data-animate]");
-
-          const observer = new IntersectionObserver(
-            (entries) => {
+          const animateObserver = new IntersectionObserver(
+            (entries, observer) => {
               entries.forEach((entry) => {
                 if (entry.isIntersecting) {
                   const el = entry.target;
@@ -393,79 +386,52 @@ import "../styles/global.css";
             },
             { threshold: 0.25 }
           );
-
-          targets.forEach((el) => observer.observe(el));
+          animatedEls.forEach((el) => animateObserver.observe(el));
         }
-      });
-    </script>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
+        // --------------------------
+        // Mobile menu toggle
         const toggleBtn = document.getElementById("menu-toggle");
         const menu = document.getElementById("mobile-menu");
-
         if (toggleBtn && menu) {
           toggleBtn.addEventListener("click", () => {
             menu.classList.toggle("hidden");
           });
         }
 
-        // Scroll to Top
+        // --------------------------
+        // Scroll to Top Button
         const scrollToTopBtn = document.getElementById("scrollToTop");
-
         if (scrollToTopBtn) {
           window.addEventListener("scroll", () => {
-            if (window.pageYOffset > 300) {
-              scrollToTopBtn.classList.remove("opacity-0", "invisible");
-            } else {
-              scrollToTopBtn.classList.add("opacity-0", "invisible");
-            }
+            scrollToTopBtn.classList.toggle(
+              "opacity-0",
+              window.pageYOffset <= 300
+            );
+            scrollToTopBtn.classList.toggle(
+              "invisible",
+              window.pageYOffset <= 300
+            );
           });
 
           scrollToTopBtn.addEventListener("click", () => {
-            window.scrollTo({
-              top: 0,
-              behavior: "smooth",
-            });
+            window.scrollTo({ top: 0, behavior: "smooth" });
           });
         }
 
-        // Smooth scrolling for anchor links
+        // --------------------------
+        // Smooth anchor scroll
         document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
           anchor.addEventListener("click", (e) => {
-            e.preventDefault();
             const targetId = anchor.getAttribute("href");
             if (!targetId) return;
+
             const target = document.querySelector(targetId);
-            if (target) {
-              target.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-              });
+            if (target instanceof HTMLElement) {
+              e.preventDefault();
+              target.scrollIntoView({ behavior: "smooth", block: "start" });
             }
           });
-        });
-
-        // Animate on scroll
-        const observerOptions = {
-          threshold: 0.1,
-          rootMargin: "0px 0px -100px 0px",
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList
-                .add
-                // "animate__animated",
-                // "animate__fadeInUp"
-                ();
-            }
-          });
-        }, observerOptions);
-
-        document.querySelectorAll("section").forEach((section) => {
-          observer.observe(section);
         });
       });
     </script>
