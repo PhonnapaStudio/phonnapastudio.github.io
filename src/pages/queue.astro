@@ -691,8 +691,10 @@ const base = import.meta.env.BASE_URL || "/";
           }
         }
 
+        const isSmall = window.matchMedia("(max-width: 640px)").matches;
+
         const calendar = new FC.Calendar(calendarEl, {
-          initialView: "dayGridMonth",
+          initialView: isSmall ? "timeGridWeek" : "dayGridMonth",
           timeZone: "Asia/Bangkok",
           locale: "th",
           firstDay: 1,
@@ -751,6 +753,12 @@ const base = import.meta.env.BASE_URL || "/";
 
         function applyResponsive() {
           const small = window.matchMedia("(max-width: 640px)").matches;
+
+          const targetView = small ? "timeGridWeek" : "dayGridMonth";
+          if (calendar.view.type !== targetView) {
+            calendar.changeView(targetView);
+          }
+
           calendar.setOption(
             "headerToolbar",
             small
@@ -763,6 +771,9 @@ const base = import.meta.env.BASE_URL || "/";
           );
           calendar.setOption("dayMaxEvents", small ? 2 : 4);
           calendar.setOption("aspectRatio", small ? 0.95 : 1.35);
+
+          calendar.setOption("slotMinTime", "09:00:00");
+          calendar.setOption("slotMaxTime", "22:00:00");
         }
 
         applyResponsive();
