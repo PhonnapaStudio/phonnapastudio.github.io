@@ -493,19 +493,23 @@ const base = import.meta.env.BASE_URL || "/";
           </div>
           <div class="modal-row">
             <span class="label">บริการ</span><span id="evService" class="value"
-              >-</span>
+              >-</span
+            >
           </div>
           <div class="modal-row">
             <span class="label">ช่าง</span><span id="evStaff" class="value"
-              >-</span>
+              >-</span
+            >
           </div>
           <div class="modal-row">
             <span class="label">เวลา</span><span id="evTime" class="value"
-              >-</span>
+              >-</span
+            >
           </div>
           <div class="modal-row">
             <span class="label">โน้ต</span><span id="evNote" class="value"
-              >-</span>
+              >-</span
+            >
           </div>
         </div>
       </div>
@@ -547,8 +551,13 @@ const base = import.meta.env.BASE_URL || "/";
         const fTime = document.getElementById("evTime");
         const fNote = document.getElementById("evNote");
 
+        // ใส่ไว้ด้านบนตรง helpers (ใกล้ๆ ที่ประกาศ fmtDate/fmtTime)
+        const CAL_TZ = "Asia/Bangkok";
+
         function fmtDate(dt) {
-          return dt.toLocaleDateString("th-TH", {
+          return FC.formatDate(dt, {
+            locale: "th",
+            timeZone: CAL_TZ, // ✅ บังคับใช้โซนเดียวกับปฏิทิน
             weekday: "short",
             day: "2-digit",
             month: "short",
@@ -556,16 +565,31 @@ const base = import.meta.env.BASE_URL || "/";
           });
         }
         function fmtTime(dt) {
-          return dt.toLocaleTimeString("th-TH", {
+          return FC.formatDate(dt, {
+            locale: "th",
+            timeZone: CAL_TZ, // ✅ บังคับใช้โซนเดียวกัน
             hour: "2-digit",
             minute: "2-digit",
             hour12: false,
           });
         }
+
         function fmtRange(start, end) {
           if (!start) return "-";
           if (!end) return `${fmtDate(start)} เวลา ${fmtTime(start)}`;
-          const sameDay = start.toDateString() === end.toDateString();
+          const sameDay =
+            FC.formatDate(start, {
+              timeZone: CAL_TZ,
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            }) ===
+            FC.formatDate(end, {
+              timeZone: CAL_TZ,
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            });
           return sameDay
             ? `${fmtDate(start)} เวลา ${fmtTime(start)}–${fmtTime(end)}`
             : `จาก ${fmtDate(start)} ${fmtTime(start)} ถึง ${fmtDate(end)} ${fmtTime(end)}`;
@@ -635,15 +659,15 @@ const base = import.meta.env.BASE_URL || "/";
               if (!date || !start || !end) return [];
 
               const isAvail = status === "available";
+              const tz = "+07:00"; // Asia/Bangkok
               return [
                 {
                   title: isAvail ? `ว่าง: ${service}` : "จองแล้ว",
-                  start: `${date}T${start}:00`,
-                  end: `${date}T${end}:00`,
+                  start: `${date}T${start}:00${tz}`, // ✅ ระบุ +07:00
+                  end: `${date}T${end}:00${tz}`, // ✅ ระบุ +07:00
                   extendedProps: { service, staff, status, note, date },
                   display: "block",
                   classNames: [isAvail ? "evt-available" : "evt-booked"],
-                  // ใส่ inline style กันกรณีธีมทับ (ซ้ำกับ CSS ด้านบนให้ชัวร์)
                   backgroundColor: isAvail
                     ? getComputedStyle(document.documentElement)
                         .getPropertyValue("--avail-bg")
