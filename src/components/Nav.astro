@@ -1,3 +1,7 @@
+---
+const base = import.meta.env.BASE_URL || "/";
+---
+
 <!-- Navbar -->
 <nav class="fixed top-0 left-0 w-full bg-white/80 backdrop-blur shadow-md z-50">
   <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -17,47 +21,51 @@
         <a
           href="#hero"
           class="nav-link text-gray-700 hover:text-primary transition"
-          >หน้าหลัก</a
-        >
+          >หน้าหลัก</a>
       </li>
       <li>
         <a
           href="#services"
-          class="nav-link text-gray-700 hover:text-primary transition">บริการ</a
-        >
+          class="nav-link text-gray-700 hover:text-primary transition"
+          >บริการ</a>
       </li>
       <li>
         <a
           href="#highlights"
           class="nav-link text-gray-700 hover:text-primary transition"
-          >จุดเด่น</a
-        >
+          >จุดเด่น</a>
       </li>
       <li>
         <a
           href="#atmosphere"
           class="nav-link text-gray-700 hover:text-primary transition"
-          >บรรยากาศ</a
-        >
+          >บรรยากาศ</a>
       </li>
       <li>
         <a
           href="#promotions"
           class="nav-link text-gray-700 hover:text-primary transition"
-          >โปรโมชั่น</a
-        >
+          >โปรโมชั่น</a>
       </li>
       <li>
         <a
           href="#reviews"
-          class="nav-link text-gray-700 hover:text-primary transition">รีวิว</a
-        >
+          class="nav-link text-gray-700 hover:text-primary transition">รีวิว</a>
       </li>
       <li>
         <a
           href="#contact"
-          class="nav-link text-gray-700 hover:text-primary transition">ติดต่อ</a
+          class="nav-link text-gray-700 hover:text-primary transition"
+          >ติดต่อ</a>
+      </li>
+      <!-- ✅ เพิ่มเมนูใหม่ -->
+      <li>
+        <a
+          href={`${base}queue/`}
+          class="nav-link text-white bg-primary px-4 py-2 rounded-full shadow hover:opacity-90 transition"
         >
+          คิวว่าง
+        </a>
       </li>
     </ul>
 
@@ -84,44 +92,47 @@
       <li>
         <a
           href="#hero"
-          class="block text-gray-700 hover:text-primary transition">หน้าหลัก</a
-        >
+          class="block text-gray-700 hover:text-primary transition">หน้าหลัก</a>
       </li>
       <li>
         <a
           href="#services"
-          class="block text-gray-700 hover:text-primary transition">บริการ</a
-        >
+          class="block text-gray-700 hover:text-primary transition">บริการ</a>
       </li>
       <li>
         <a
           href="#highlights"
-          class="block text-gray-700 hover:text-primary transition">จุดเด่น</a
-        >
+          class="block text-gray-700 hover:text-primary transition">จุดเด่น</a>
       </li>
       <li>
         <a
           href="#atmosphere"
-          class="block text-gray-700 hover:text-primary transition">บรรยากาศ</a
-        >
+          class="block text-gray-700 hover:text-primary transition">บรรยากาศ</a>
       </li>
       <li>
         <a
           href="#promotions"
-          class="block text-gray-700 hover:text-primary transition">โปรโมชั่น</a
-        >
+          class="block text-gray-700 hover:text-primary transition"
+          >โปรโมชั่น</a>
       </li>
       <li>
         <a
           href="#reviews"
-          class="block text-gray-700 hover:text-primary transition">รีวิว</a
-        >
+          class="block text-gray-700 hover:text-primary transition">รีวิว</a>
       </li>
       <li>
         <a
           href="#contact"
-          class="block text-gray-700 hover:text-primary transition">ติดต่อ</a
+          class="block text-gray-700 hover:text-primary transition">ติดต่อ</a>
+      </li>
+      <!-- ✅ เพิ่มเมนูใหม่ -->
+      <li>
+        <a
+          href={`${base}queue/`}
+          class="block text-white bg-primary px-4 py-2 rounded-full text-center shadow hover:opacity-90 transition"
         >
+          คิวว่าง
+        </a>
       </li>
     </ul>
   </div>

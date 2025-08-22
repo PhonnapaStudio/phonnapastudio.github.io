@@ -24,10 +24,14 @@
       </p>
     </div>
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <!-- loop: เพิ่ม data-animate สลับแบบ -->
+    <!-- Track: mobile = slider (horizontal, snap), md+ = grid -->
+    <div
+      id="atmoTrack"
+      class="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none scroll-smooth"
+    >
+      <!-- slide 1 -->
       <div
-        class="overflow-hidden rounded-2xl shadow-lg card-hover opacity-0"
+        class="slide overflow-hidden rounded-2xl shadow-lg card-hover opacity-0 flex-none w-[85%] sm:w-[70%] md:w-auto snap-center"
         data-animate="fadeInLeft"
       >
         <img
@@ -36,8 +40,9 @@
           class="w-full h-64 object-cover"
         />
       </div>
+      <!-- slide 2 -->
       <div
-        class="overflow-hidden rounded-2xl shadow-lg card-hover opacity-0"
+        class="slide overflow-hidden rounded-2xl shadow-lg card-hover opacity-0 flex-none w-[85%] sm:w-[70%] md:w-auto snap-center"
         data-animate="fadeInRight"
       >
         <img
@@ -46,8 +51,9 @@
           class="w-full h-64 object-cover"
         />
       </div>
+      <!-- slide 3 -->
       <div
-        class="overflow-hidden rounded-2xl shadow-lg card-hover opacity-0"
+        class="slide overflow-hidden rounded-2xl shadow-lg card-hover opacity-0 flex-none w-[85%] sm:w-[70%] md:w-auto snap-center"
         data-animate="zoomIn"
       >
         <img
@@ -56,8 +62,9 @@
           class="w-full h-64 object-cover"
         />
       </div>
+      <!-- slide 4 -->
       <div
-        class="overflow-hidden rounded-2xl shadow-lg card-hover opacity-0"
+        class="slide overflow-hidden rounded-2xl shadow-lg card-hover opacity-0 flex-none w-[85%] sm:w-[70%] md:w-auto snap-center"
         data-animate="fadeInLeftBig"
       >
         <img
@@ -66,8 +73,9 @@
           class="w-full h-64 object-cover"
         />
       </div>
+      <!-- slide 5 -->
       <div
-        class="overflow-hidden rounded-2xl shadow-lg card-hover opacity-0"
+        class="slide overflow-hidden rounded-2xl shadow-lg card-hover opacity-0 flex-none w-[85%] sm:w-[70%] md:w-auto snap-center"
         data-animate="slideInUp"
       >
         <img
@@ -76,8 +84,9 @@
           class="w-full h-64 object-cover"
         />
       </div>
+      <!-- slide 6 -->
       <div
-        class="overflow-hidden rounded-2xl shadow-lg card-hover opacity-0"
+        class="slide overflow-hidden rounded-2xl shadow-lg card-hover opacity-0 flex-none w-[85%] sm:w-[70%] md:w-auto snap-center"
         data-animate="fadeInUp"
       >
         <img
@@ -87,7 +96,135 @@
         />
       </div>
     </div>
+
+    <!-- Mobile controls (ซ่อนบน md+) -->
+    <div class="md:hidden mt-6 flex items-center justify-center gap-3">
+      <button
+        id="atmoPrev"
+        type="button"
+        class="px-3 py-2 rounded-full border border-gray-300 text-gray-700 active:scale-95"
+        aria-label="ก่อนหน้า"
+      >
+        ‹
+      </button>
+
+      <div id="atmoDots" class="flex items-center gap-2"></div>
+
+      <button
+        id="atmoNext"
+        type="button"
+        class="px-3 py-2 rounded-full border border-gray-300 text-gray-700 active:scale-95"
+        aria-label="ถัดไป"
+      >
+        ›
+      </button>
+    </div>
   </div>
 </section>
 
+<script>
+  // @ts-check
+  (() => {
+    /** @type {HTMLDivElement|null} */
+    const trackEl = document.getElementById("atmoTrack");
+    /** @type {HTMLButtonElement|null} */
+    const prevBtn = document.getElementById("atmoPrev");
+    /** @type {HTMLButtonElement|null} */
+    const nextBtn = document.getElementById("atmoNext");
+    /** @type {HTMLDivElement|null} */
+    const dotsWrap = document.getElementById("atmoDots");
 
+    if (!(trackEl instanceof HTMLDivElement)) return;
+    /** @type {HTMLDivElement} */
+    const track = trackEl;
+
+    /** @type {HTMLElement[]} */
+    const slides = Array.from(
+      /** @type {NodeListOf<HTMLElement>} */ (track.querySelectorAll(".slide"))
+    );
+
+    if (!slides.length) return;
+
+    /** @type {"smooth"|"auto"} */
+    const smooth = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? "auto"
+      : "smooth";
+
+    function renderDots() {
+      if (!(dotsWrap instanceof HTMLDivElement)) return;
+      dotsWrap.innerHTML = "";
+      slides.forEach(
+        (/** @type {HTMLElement} */ _s, /** @type {number} */ i) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className =
+            "w-2.5 h-2.5 rounded-full bg-gray-300 transition-all duration-200";
+          b.setAttribute("aria-label", "ไปสไลด์ที่ " + (i + 1));
+          b.addEventListener("click", () => goTo(i));
+          dotsWrap.appendChild(b);
+        }
+      );
+    }
+
+    function getNearestIndex() {
+      const left = track.scrollLeft;
+      const w = track.clientWidth;
+      let nearest = 0;
+      let minDist = Infinity;
+      slides.forEach(
+        (/** @type {HTMLElement} */ el, /** @type {number} */ i) => {
+          const centerDist = Math.abs(
+            el.offsetLeft - left - (w - el.clientWidth) / 2
+          );
+          if (centerDist < minDist) {
+            minDist = centerDist;
+            nearest = i;
+          }
+        }
+      );
+      return nearest;
+    }
+
+    /** เลื่อนไป index ที่กำหนด
+     * @param {number} index
+     */
+    function goTo(index) {
+      const i = Math.max(0, Math.min(slides.length - 1, index));
+      const el = slides[i];
+      const targetLeft =
+        el.offsetLeft - (track.clientWidth - el.clientWidth) / 2;
+      track.scrollTo({ left: targetLeft, behavior: smooth });
+      updateDots(i);
+    }
+
+    /** อัปเดตจุดสถานะ
+     * @param {number} [activeIdx]
+     */
+    function updateDots(activeIdx) {
+      if (!(dotsWrap instanceof HTMLDivElement)) return;
+      const act = typeof activeIdx === "number" ? activeIdx : getNearestIndex();
+      const dots = Array.from(dotsWrap.children);
+      dots.forEach((/** @type {HTMLElement} */ d, /** @type {number} */ i) => {
+        d.className =
+          "w-2.5 h-2.5 rounded-full transition-all duration-200 " +
+          (i === act ? "bg-primary scale-125" : "bg-gray-300");
+      });
+    }
+
+    // ปุ่มเลื่อน
+    prevBtn?.addEventListener("click", () => goTo(getNearestIndex() - 1));
+    nextBtn?.addEventListener("click", () => goTo(getNearestIndex() + 1));
+
+    // อัปเดต dot ระหว่างเลื่อน/รีไซส์
+    track.addEventListener(
+      "scroll",
+      () => requestAnimationFrame(() => updateDots()),
+      { passive: true }
+    );
+    window.addEventListener("resize", () => updateDots());
+
+    // เริ่มต้น
+    renderDots();
+    updateDots(0);
+  })();
+</script>

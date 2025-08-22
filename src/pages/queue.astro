@@ -1,0 +1,861 @@
+---
+/**
+ * หน้าเฉพาะปฏิทิน — ไม่ใช้เลย์เอาต์เดิม
+ * ตั้งค่า SHEET_CSV_URL เป็นลิงก์ Google Sheets -> Publish to the web -> CSV
+ */
+const SHEET_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vT6xkgqP_QRVKYf5OhLuLI7eIxCADsnDoX5keC-vAat_YmeAF7_fH6nwOAvW6vASS-tq7ysV5ZnqwYn/pub?gid=0&single=true&output=csv"; // <- แทนที่ด้วยของจริง
+const base = import.meta.env.BASE_URL || "/";
+---
+
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>เช็คคิวว่าง | Phonnapa Studio</title>
+    <meta
+      name="description"
+      content="ดูคิวว่างของร้านทำเล็บ Phonnapa Studio แบบเรียลไทม์ อัปเดตจาก Google Sheets"
+    />
+    <link rel="icon" type="image/png" href="/images/logo.webp" />
+
+    <!-- ฟอนต์ + สไตล์พื้นฐาน -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --color-primary: #f78cbc;
+        --color-accent: #ffadc3;
+        --bg: #fff9fb;
+        --bg-soft: #f5f0fa;
+
+        /* สีสถานะ */
+        --avail-border: #22c55e;
+        --avail-bg: rgba(34, 197, 94, 0.22);
+        --booked-border: #9ca3af;
+        --booked-bg: rgba(0, 0, 0, 0.05);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family:
+          "Sarabun",
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, var(--bg) 0%, var(--bg-soft) 100%);
+        min-height: 100vh;
+      }
+
+      /* ---------- BG: GIF เต็มจอ + ภาพนิ่งสำหรับ reduced-motion ---------- */
+      .bg-layer {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+      }
+      .bg-layer img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        filter: saturate(0.9) brightness(0.95);
+      }
+      .bg-layer .still {
+        display: none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bg-layer .motion {
+          display: none;
+        }
+        .bg-layer .still {
+          display: block;
+        }
+      }
+      .bg-layer::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          120% 100% at 50% 0%,
+          rgba(10, 10, 25, 0) 0%,
+          rgba(10, 10, 25, 0.45) 55%,
+          rgba(10, 10, 25, 0.65) 100%
+        );
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      /* --------- Glassmorphism กล่องปฏิทิน --------- */
+      .card {
+        background: rgba(255, 255, 255, 0.09);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 18px;
+        padding: 16px;
+        box-shadow: 0 10px 40px rgba(247, 140, 188, 0.18);
+        -webkit-backdrop-filter: saturate(1.2) blur(14px);
+      }
+      @supports not (backdrop-filter: blur(1px)) {
+        .card {
+          background: rgba(255, 255, 255, 0.92);
+        }
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1rem;
+        border-radius: 999px;
+        border: 1px solid var(--color-primary);
+        color: #fff;
+        background: var(--color-primary);
+        text-decoration: none;
+      }
+      .btn-outline {
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--color-primary);
+        backdrop-filter: blur(4px);
+      }
+      .legend {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        font-size: 14px;
+        margin: 12px 0 16px;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        display: inline-block;
+      }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      .title {
+        font-weight: 700;
+        font-size: clamp(1.3rem, 1.6vw + 1rem, 2rem);
+        color: #ffffff;
+      }
+      .pill {
+        font-size: 12px;
+        padding: 0.25rem 0.6rem;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 999px;
+        backdrop-filter: blur(4px);
+      }
+      .foot {
+        text-align: center;
+        color: #777;
+        font-size: 13px;
+        margin-top: 18px;
+      }
+      @media (max-width: 640px) {
+        .container {
+          padding: 16px;
+        }
+      }
+
+      /* Lofi mini-player */
+      .lofi-control {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid var(--color-accent);
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 10px 30px rgba(247, 140, 188, 0.18);
+      }
+      .lofi-btn {
+        all: unset;
+        cursor: pointer;
+        border: 1px solid var(--color-primary);
+        background: var(--color-primary);
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 13px;
+      }
+      .lofi-btn.secondary {
+        background: transparent;
+        color: var(--color-primary);
+      }
+      .lofi-slider {
+        width: 110px;
+      }
+      @media (max-width: 480px) {
+        .lofi-control {
+          gap: 8px;
+          padding: 8px 10px;
+        }
+        .lofi-slider {
+          width: 90px;
+        }
+      }
+
+      /* ---------- พื้นกระจกบริเวณปฏิทิน ---------- */
+      #calendar {
+        background: rgba(255, 255, 255, 0.33);
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        border-radius: 14px;
+        padding: 8px;
+        backdrop-filter: blur(1px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+      @supports not (backdrop-filter: blur(1px)) {
+        #calendar {
+          background: rgba(255, 255, 255, 0.92);
+        }
+      }
+
+      /* ---------- ธีม FullCalendar ---------- */
+      .fc {
+        --fc-border-color: #f1e5ef;
+        --fc-button-bg-color: var(--color-primary);
+        --fc-button-border-color: var(--color-primary);
+        --fc-today-bg-color: rgba(255, 241, 246, 0.75);
+        --fc-page-bg-color: transparent;
+        --fc-neutral-bg-color: rgba(255, 255, 255, 0.35);
+        --fc-event-bg-color: rgba(255, 255, 255, 0.82);
+        --fc-event-text-color: #111;
+        --fc-event-border-color: rgba(0, 0, 0, 0.08);
+      }
+      .fc .fc-toolbar-title {
+        font-weight: 700;
+      }
+      .fc .fc-button {
+        border-radius: 999px;
+      }
+      .fc-theme-standard td,
+      .fc-theme-standard th {
+        border-color: rgba(255, 255, 255, 0.6);
+      }
+      .fc .fc-daygrid-day-number {
+        background: rgba(255, 255, 255, 0.55);
+        color: #111;
+        padding: 2px 6px;
+        border-radius: 8px;
+      }
+
+      /* ---------- EVENT styles (รวมให้เหลือชุดเดียว) ---------- */
+      .fc .fc-daygrid-event,
+      .fc .fc-timegrid-event {
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+      }
+      /* ว่าง = เขียว */
+      .fc .evt-available {
+        border-left: 4px solid var(--avail-border) !important;
+      }
+      .fc .evt-available .fc-event-main {
+        background: var(--avail-bg) !important;
+      }
+      /* จองแล้ว = เทา */
+      .fc .evt-booked {
+        border-left: 4px solid var(--booked-border) !important;
+      }
+      .fc .evt-booked .fc-event-main {
+        background: var(--booked-bg) !important;
+      }
+
+      /* ====== MODAL ====== */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 40;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        background: rgba(15, 15, 30, 0.55);
+        backdrop-filter: blur(6px);
+      }
+      .modal-backdrop[hidden] {
+        display: none;
+      }
+      .modal {
+        width: min(560px, 96vw);
+        background: rgba(255, 255, 255, 0.86);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(10px) saturate(1.1);
+        -webkit-backdrop-filter: blur(10px) saturate(1.1);
+        padding: 18px 18px 14px;
+        color: #111;
+        position: relative;
+      }
+      .modal-title {
+        margin: 0 0 10px 0;
+        font-weight: 700;
+        font-size: 20px;
+      }
+      .modal-close {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+        font-size: 20px;
+        line-height: 1;
+        padding: 6px;
+        border-radius: 8px;
+      }
+      .modal-close:hover {
+        background: rgba(0, 0, 0, 0.06);
+      }
+      .modal-content {
+        display: grid;
+        gap: 10px;
+      }
+      .modal-row {
+        display: grid;
+        grid-template-columns: 96px 1fr;
+        gap: 10px;
+        align-items: start;
+      }
+      .modal-row .label {
+        color: #555;
+        font-size: 14px;
+      }
+      .modal-row .value {
+        color: #111;
+        font-size: 15px;
+      }
+      #evStatus.badge {
+        display: inline-flex !important;
+        align-items: center;
+        max-width: max-content;
+        padding: 2px 10px;
+        border-radius: 999px;
+      }
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 13px;
+        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.8);
+      }
+      .badge-available {
+        background: #eaffef;
+        color: #166534;
+        border-color: #86efac;
+      }
+      .badge-booked {
+        background: #f3f4f6;
+        color: #374151;
+        border-color: #e5e7eb;
+      }
+
+      @media (max-width: 640px) {
+        .modal {
+          padding: 16px 14px 12px;
+        }
+        .modal-title {
+          font-size: 18px;
+        }
+        .modal-row {
+          grid-template-columns: 84px 1fr;
+          gap: 8px;
+        }
+        .modal-row .label {
+          font-size: 13px;
+        }
+        .modal-row .value {
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- BG: GIF + Still -->
+    <div class="bg-layer" aria-hidden="true">
+      <picture class="motion">
+        <source
+          media="(max-width: 640px)"
+          srcset="/images/lofi-bg-mobile.gif"
+        />
+        <img src="/images/lofi-bg-desktop.gif" alt="" decoding="async" />
+      </picture>
+    </div>
+
+    <div class="container">
+      <div class="topbar">
+        <a class="btn btn-outline" href={base} aria-label="กลับหน้าแรก"
+          >← กลับหน้าแรก</a
+        >
+        <span class="btn btn-outline">Phonnapa Studio</span>
+      </div>
+
+      <div class="card glass">
+        <div
+          style="display:flex; justify-content:space-between; align-items:end; gap:12px; flex-wrap:wrap;"
+        >
+          <h1 class="title">ตารางคิวว่าง</h1>
+          <div class="legend">
+            <span
+              ><span class="dot" style="background:var(--avail-border);"></span>
+              <span style="color: white;">ว่าง</span></span
+            >
+            <span style="opacity:.7;"
+              ><span class="dot" style="background:#9ca3af;"></span>
+              <span style="color: white;">จองแล้ว</span></span
+            >
+          </div>
+        </div>
+
+        <div id="calendar" data-sheet-url={SHEET_CSV_URL}></div>
+
+        <p class="foot" style="color: white;">
+          พบปัญหาในการดูตาราง? รีโหลดหน้า หรือทักไลน์เราได้เลย
+        </p>
+        <p class="foot" style="color: white;">
+          หากต้องการต่อเล็บ PVC เพ้นท์ลายเยอะๆ จึ้งๆ
+          รบกวนลูกค้าจองคิวที่มีติดกัน 2 คิวนะคะ
+          ในการจองคิวทางร้านจะขออนุญาตเก็บมัดจำล็อคคิว คิวละ 100.-
+          (ส่วนต่างชำระหน้างานอีกทีค่ะ) **** มัดจำ = ได้คิว ****
+          จองแล้วรบกวนลูกค้ามาตรงเวลานัดนะคะ เลทได้ไม่เกิน 15 นาที กรณีเลื่อน
+          สามารถเลื่อนได้ 1 ครั้ง / กรณียกเลิก = ยึดมัดจำ
+        </p>
+      </div>
+    </div>
+
+    <!-- Lofi mini player -->
+    <div class="lofi-control" role="group" aria-label="ตัวควบคุมเพลง lofi">
+      <button id="lofiToggle" class="lofi-btn" aria-pressed="false"
+        >▶︎ เล่น</button
+      >
+      <button id="lofiMute" class="lofi-btn secondary" aria-pressed="false"
+        >🔇</button
+      >
+      <input
+        id="lofiVol"
+        class="lofi-slider"
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        value="0.5"
+        aria-label="ปรับเสียง"
+      />
+      <audio id="lofiAudio" preload="auto" loop autoplay playsinline muted>
+        <source src="/audio/lofi.mp3" type="audio/mpeg" />
+      </audio>
+    </div>
+
+    <!-- Event Detail Modal -->
+    <div id="eventModal" class="modal-backdrop" hidden>
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="evTitle"
+      >
+        <button class="modal-close" type="button" aria-label="ปิด" data-close
+          >✕</button
+        >
+        <h3 id="evTitle" class="modal-title">รายละเอียดคิว</h3>
+        <div class="modal-content">
+          <div class="modal-row">
+            <span class="label">สถานะ</span><span
+              id="evStatus"
+              class="value badge"></span>
+          </div>
+          <div class="modal-row">
+            <span class="label">บริการ</span><span id="evService" class="value"
+              >-</span>
+          </div>
+          <div class="modal-row">
+            <span class="label">ช่าง</span><span id="evStaff" class="value"
+              >-</span>
+          </div>
+          <div class="modal-row">
+            <span class="label">เวลา</span><span id="evTime" class="value"
+              >-</span>
+          </div>
+          <div class="modal-row">
+            <span class="label">โน้ต</span><span id="evNote" class="value"
+              >-</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"
+      is:raw></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales-all.global.min.js"
+      is:raw></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"
+      is:raw></script>
+
+    <script is:inline>
+      window.addEventListener("DOMContentLoaded", () => {
+        const FC = window.FullCalendar;
+        const Papa = window.Papa;
+        if (!FC || !Papa) {
+          console.error("FullCalendar หรือ Papa ยังไม่พร้อม");
+          return;
+        }
+
+        const calendarEl = document.getElementById("calendar");
+        if (!calendarEl) return;
+
+        /* ---------- helpers: modal + format ---------- */
+        const modalEl = document.getElementById("eventModal");
+        const closeBtn = modalEl?.querySelector("[data-close]");
+        const fTitle = document.getElementById("evTitle");
+        const fStatus = document.getElementById("evStatus");
+        const fService = document.getElementById("evService");
+        const fStaff = document.getElementById("evStaff");
+        const fTime = document.getElementById("evTime");
+        const fNote = document.getElementById("evNote");
+
+        function fmtDate(dt) {
+          return dt.toLocaleDateString("th-TH", {
+            weekday: "short",
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+        }
+        function fmtTime(dt) {
+          return dt.toLocaleTimeString("th-TH", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          });
+        }
+        function fmtRange(start, end) {
+          if (!start) return "-";
+          if (!end) return `${fmtDate(start)} เวลา ${fmtTime(start)}`;
+          const sameDay = start.toDateString() === end.toDateString();
+          return sameDay
+            ? `${fmtDate(start)} เวลา ${fmtTime(start)}–${fmtTime(end)}`
+            : `จาก ${fmtDate(start)} ${fmtTime(start)} ถึง ${fmtDate(end)} ${fmtTime(end)}`;
+        }
+
+        function openEventModal(data) {
+          if (!modalEl) return;
+          const { status, service, staff, note, start, end } = data || {};
+          fTitle &&
+            (fTitle.textContent = service
+              ? `รายละเอียดคิว: ${service}`
+              : "รายละเอียดคิว");
+          if (fStatus) {
+            const isAvail = status === "available";
+            fStatus.textContent = isAvail ? "ว่าง" : "จองแล้ว";
+            fStatus.className =
+              "value badge " + (isAvail ? "badge-available" : "badge-booked");
+          }
+          fService && (fService.textContent = service || "-");
+          fStaff && (fStaff.textContent = staff || "-");
+          fTime && (fTime.textContent = fmtRange(start, end));
+          fNote && (fNote.textContent = note || "-");
+
+          modalEl.hidden = false;
+          const prevOverflow = document.documentElement.style.overflow;
+          document.documentElement.dataset._prevOverflow = prevOverflow;
+          document.documentElement.style.overflow = "hidden";
+          closeBtn?.focus();
+        }
+        function closeEventModal() {
+          if (!modalEl) return;
+          modalEl.hidden = true;
+          const prev = document.documentElement.dataset._prevOverflow || "";
+          document.documentElement.style.overflow = prev;
+        }
+        closeBtn?.addEventListener("click", closeEventModal);
+        modalEl?.addEventListener("click", (e) => {
+          if (e.target === modalEl) closeEventModal();
+        });
+        window.addEventListener("keydown", (e) => {
+          if (!modalEl?.hidden && e.key === "Escape") closeEventModal();
+        });
+
+        /* ---------- โหลดชีต + ปฏิทิน ---------- */
+        async function loadEventsFromSheet() {
+          const url = calendarEl.getAttribute("data-sheet-url") || "";
+          try {
+            const res = await fetch(url, { cache: "no-store" });
+            if (!res.ok) throw new Error("โหลดข้อมูลชีตไม่สำเร็จ");
+            const text = await res.text();
+            const parsed = Papa.parse(text, {
+              header: true,
+              skipEmptyLines: true,
+            });
+            const rows = parsed.data || [];
+
+            return rows.flatMap((r) => {
+              const date = (r.date || r.DATE || "").trim?.() || "";
+              const start = (r.start_time || r.start || "").trim?.() || "";
+              const end = (r.end_time || r.end || "").trim?.() || "";
+              const service = (r.service || "").trim?.() || "";
+              const staff = (r.staff || "").trim?.() || "";
+              const status =
+                (r.status || "available").toString().toLowerCase().trim?.() ||
+                "available";
+              const note = (r.note || "").trim?.() || "";
+              if (!date || !start || !end) return [];
+
+              const isAvail = status === "available";
+              return [
+                {
+                  title: isAvail ? `ว่าง: ${service}` : "จองแล้ว",
+                  start: `${date}T${start}:00`,
+                  end: `${date}T${end}:00`,
+                  extendedProps: { service, staff, status, note, date },
+                  display: "block",
+                  classNames: [isAvail ? "evt-available" : "evt-booked"],
+                  // ใส่ inline style กันกรณีธีมทับ (ซ้ำกับ CSS ด้านบนให้ชัวร์)
+                  backgroundColor: isAvail
+                    ? getComputedStyle(document.documentElement)
+                        .getPropertyValue("--avail-bg")
+                        .trim()
+                    : getComputedStyle(document.documentElement)
+                        .getPropertyValue("--booked-bg")
+                        .trim(),
+                  borderColor: isAvail
+                    ? getComputedStyle(document.documentElement)
+                        .getPropertyValue("--avail-border")
+                        .trim()
+                    : getComputedStyle(document.documentElement)
+                        .getPropertyValue("--booked-border")
+                        .trim(),
+                },
+              ];
+            });
+          } catch (err) {
+            console.error(err);
+            return [];
+          }
+        }
+
+        const calendar = new FC.Calendar(calendarEl, {
+          initialView: "dayGridMonth",
+          timeZone: "Asia/Bangkok",
+          locale: "th",
+          firstDay: 1,
+          height: "auto",
+          nowIndicator: true,
+          headerToolbar: {
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,timeGridDay",
+          },
+          dayMaxEvents: 4,
+          displayEventEnd: true,
+          eventTimeFormat: {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          },
+          views: { dayGridMonth: { fixedWeekCount: false } },
+
+          events: async (_info, success, failure) => {
+            const events = await loadEventsFromSheet();
+            if (events.length) success(events);
+            else failure(new Error("ไม่มีข้อมูลจากชีต"));
+          },
+
+          // ให้สีเขียว “ติด” แน่นอนด้วย eventDidMount (เผื่อ CSS ถูกธีมทับ)
+          eventDidMount(info) {
+            const p = info.event.extendedProps || {};
+            const isAvail = p.status === "available";
+            const main = info.el.querySelector(".fc-event-main");
+            if (isAvail) {
+              info.el.style.borderLeft = `4px solid var(--avail-border)`;
+              if (main) main.style.background = `var(--avail-bg)`;
+            } else {
+              info.el.style.borderLeft = `4px solid var(--booked-border)`;
+              if (main) main.style.background = `var(--booked-bg)`;
+            }
+          },
+
+          // เปิดโมดัลแทน alert และกัน default action
+          eventClick(info) {
+            info.jsEvent?.preventDefault?.();
+            const p = info.event.extendedProps || {};
+            openEventModal({
+              status: p.status,
+              service: p.service,
+              staff: p.staff,
+              note: p.note,
+              start: info.event.start,
+              end: info.event.end,
+            });
+          },
+
+          windowResize: () => applyResponsive(),
+        });
+
+        function applyResponsive() {
+          const small = window.matchMedia("(max-width: 640px)").matches;
+          calendar.setOption(
+            "headerToolbar",
+            small
+              ? { left: "prev", center: "title", right: "next" }
+              : {
+                  left: "prev,next today",
+                  center: "title",
+                  right: "dayGridMonth,timeGridWeek,timeGridDay",
+                }
+          );
+          calendar.setOption("dayMaxEvents", small ? 2 : 4);
+          calendar.setOption("aspectRatio", small ? 0.95 : 1.35);
+        }
+
+        applyResponsive();
+        calendar.render();
+      });
+    </script>
+
+    <!-- Lofi audio controls (JS ล้วน) -->
+    <script is:inline>
+      (function () {
+        const audio = document.getElementById("lofiAudio");
+        const btn = document.getElementById("lofiToggle");
+        const mute = document.getElementById("lofiMute");
+        const vol = document.getElementById("lofiVol");
+        if (!(audio && btn && mute && vol)) return;
+
+        const DEFAULT_VOL = Number(vol.value || 0.5);
+        audio.volume = DEFAULT_VOL;
+
+        let isPlaying = false;
+        let isMuted = audio.muted || audio.hasAttribute("muted");
+
+        function syncUI() {
+          btn.textContent = isPlaying ? "⏸︎ พัก" : "▶︎ เล่น";
+          btn.setAttribute("aria-pressed", String(isPlaying));
+          mute.textContent = isMuted ? "🔈" : "🔇";
+          mute.setAttribute("aria-pressed", String(isMuted));
+        }
+
+        function onFirstUserGestureOnce(handler) {
+          const events = [
+            "pointerdown",
+            "touchstart",
+            "keydown",
+            "wheel",
+            "scroll",
+          ];
+          const wrap = async (e) => {
+            events.forEach((ev) => window.removeEventListener(ev, wrap, true));
+            await handler(e);
+          };
+          events.forEach((ev) =>
+            window.addEventListener(ev, wrap, { once: true, capture: true })
+          );
+        }
+
+        async function startAutoplay() {
+          try {
+            audio.muted = true;
+            await audio.play();
+            isPlaying = true;
+            isMuted = true;
+            try {
+              audio.muted = false;
+              await audio.play();
+              isMuted = false;
+            } catch {}
+          } catch {
+            onFirstUserGestureOnce(async () => {
+              try {
+                audio.muted = false;
+                await audio.play();
+                isPlaying = true;
+                isMuted = false;
+              } catch {
+                try {
+                  audio.muted = true;
+                  await audio.play();
+                  isPlaying = true;
+                  isMuted = true;
+                } catch {}
+              }
+              syncUI();
+            });
+          }
+          syncUI();
+        }
+
+        btn.addEventListener("click", async () => {
+          try {
+            if (!isPlaying) {
+              await audio.play();
+              isPlaying = true;
+            } else {
+              audio.pause();
+              isPlaying = false;
+            }
+            syncUI();
+          } catch {
+            alert("ไม่สามารถเล่นไฟล์เสียงได้ กรุณาตรวจสอบไฟล์ /audio/lofi.mp3");
+          }
+        });
+
+        mute.addEventListener("click", () => {
+          isMuted = !isMuted;
+          audio.muted = isMuted;
+          syncUI();
+        });
+
+        vol.addEventListener("input", () => {
+          audio.volume = Number(vol.value);
+          if (audio.volume === 0 && !isMuted) {
+            isMuted = true;
+            audio.muted = true;
+          } else if (audio.volume > 0 && isMuted) {
+            isMuted = false;
+            audio.muted = false;
+          }
+          syncUI();
+        });
+
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden && isPlaying && audio.paused) startAutoplay();
+        });
+
+        startAutoplay();
+      })();
+    </script>
+  </body>
+</html>
