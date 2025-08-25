@@ -788,7 +788,7 @@ const base = import.meta.env.BASE_URL || "/";
 
           if (evBookLine) {
             const when = fmtRange(start, end);
-            const msg = `สวัสดีค่ะ ขอจองคิวทำเล็บ\nบริการ: ${service || "-"}\n${staff ? `ลูกค้า: ${staff}\n` : ""}เวลา: ${when}\nขอรายละเอียดเพิ่มเติมด้วยค่ะ`;
+            const msg = `สวัสดีค่ะ ขอจองคิวทำเล็บ\nบริการ: ${service || "-"}\n${staff ? `ลูกค้า: ${staff}\n` : ""} ${when}\nขอรายละเอียดเพิ่มเติมด้วยค่ะ`;
             evBookLine.href = buildLineLink(msg);
           }
 
