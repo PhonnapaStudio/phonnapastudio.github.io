@@ -979,7 +979,7 @@ const base = import.meta.env.BASE_URL || "/";
               badge.className = isAvail
                 ? "badge badge-available"
                 : "badge badge-booked";
-              root.append(dot, time, badge);
+              root.append( badge);
               return { domNodes: [root] };
             }
             return true;
