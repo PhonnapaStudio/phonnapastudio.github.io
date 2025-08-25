@@ -855,7 +855,7 @@ const base = import.meta.env.BASE_URL || "/";
 
               return [
                 {
-                  title: isAvail ? `ว่าง: ${service}` : "จองแล้ว",
+                  title: isAvail ? "ว่าง" : "จองแล้ว",
                   start: `${date}T${start}${tz}`,
                   end: `${date}T${end}${tz}`,
                   extendedProps: { service, staff, status, note, date },
