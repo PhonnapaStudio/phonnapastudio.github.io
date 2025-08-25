@@ -2,9 +2,11 @@
 /**
  * หน้าเฉพาะปฏิทิน — ไม่ใช้เลย์เอาต์เดิม
  * ตั้งค่า SHEET_CSV_URL เป็นลิงก์ Google Sheets -> Publish to the web -> CSV
+ * ตั้งค่า LINE_OA_ID เป็นไอดี OA ของร้าน (เช่น @phonnapastudio)
  */
 const SHEET_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vT6xkgqP_QRVKYf5OhLuLI7eIxCADsnDoX5keC-vAat_YmeAF7_fH6nwOAvW6vASS-tq7ysV5ZnqwYn/pub?gid=0&single=true&output=csv"; // <- แทนที่ด้วยของจริง
+const LINE_OA_ID = "@your-line-id"; // <- 🔧 แก้เป็น OA ของคุณ
 const base = import.meta.env.BASE_URL || "/";
 ---
 
@@ -58,7 +60,7 @@ const base = import.meta.env.BASE_URL || "/";
         min-height: 100vh;
       }
 
-      /* ---------- BG: GIF เต็มจอ + ภาพนิ่งสำหรับ reduced-motion ---------- */
+      /* ---------- BG: GIF + Still ---------- */
       .bg-layer {
         position: fixed;
         inset: 0;
@@ -102,15 +104,21 @@ const base = import.meta.env.BASE_URL || "/";
         margin: 0 auto;
         padding: 24px;
       }
+      @media (max-width: 640px) {
+        .container {
+          padding: 16px;
+        }
+      }
 
       /* --------- Glassmorphism กล่องปฏิทิน --------- */
       .card {
-        background: rgba(255, 255, 255, 0.09);
+        background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.35);
         border-radius: 18px;
         padding: 16px;
         box-shadow: 0 10px 40px rgba(247, 140, 188, 0.18);
         -webkit-backdrop-filter: saturate(1.2) blur(14px);
+        backdrop-filter: blur(2px) saturate(1.2);
       }
       @supports not (backdrop-filter: blur(1px)) {
         .card {
@@ -134,6 +142,7 @@ const base = import.meta.env.BASE_URL || "/";
         color: var(--color-primary);
         backdrop-filter: blur(4px);
       }
+
       .legend {
         display: flex;
         gap: 16px;
@@ -156,14 +165,7 @@ const base = import.meta.env.BASE_URL || "/";
       .title {
         font-weight: 700;
         font-size: clamp(1.3rem, 1.6vw + 1rem, 2rem);
-        color: #ffffff;
-      }
-      .pill {
-        font-size: 12px;
-        padding: 0.25rem 0.6rem;
-        background: rgba(255, 255, 255, 0.8);
-        border-radius: 999px;
-        backdrop-filter: blur(4px);
+        color: #fff;
       }
       .foot {
         text-align: center;
@@ -171,62 +173,14 @@ const base = import.meta.env.BASE_URL || "/";
         font-size: 13px;
         margin-top: 18px;
       }
-      @media (max-width: 640px) {
-        .container {
-          padding: 16px;
-        }
-      }
 
-      /* Lofi mini-player */
-      .lofi-control {
-        position: fixed;
-        right: 16px;
-        bottom: 16px;
-        z-index: 5;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 12px;
-        border-radius: 14px;
-        border: 1px solid var(--color-accent);
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(12px);
-        box-shadow: 0 10px 30px rgba(247, 140, 188, 0.18);
-      }
-      .lofi-btn {
-        all: unset;
-        cursor: pointer;
-        border: 1px solid var(--color-primary);
-        background: var(--color-primary);
-        color: #fff;
-        padding: 6px 10px;
-        border-radius: 999px;
-        font-size: 13px;
-      }
-      .lofi-btn.secondary {
-        background: transparent;
-        color: var(--color-primary);
-      }
-      .lofi-slider {
-        width: 110px;
-      }
-      @media (max-width: 480px) {
-        .lofi-control {
-          gap: 8px;
-          padding: 8px 10px;
-        }
-        .lofi-slider {
-          width: 90px;
-        }
-      }
-
-      /* ---------- พื้นกระจกบริเวณปฏิทิน ---------- */
+      /* ---------- Calendar box ---------- */
       #calendar {
-        background: rgba(255, 255, 255, 0.33);
+        background: rgba(255, 255, 255, 0.3);
         border: 1px solid rgba(255, 255, 255, 0.45);
         border-radius: 14px;
         padding: 8px;
-        backdrop-filter: blur(1px);
+        backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
       }
       @supports not (backdrop-filter: blur(1px)) {
@@ -235,7 +189,7 @@ const base = import.meta.env.BASE_URL || "/";
         }
       }
 
-      /* ---------- ธีม FullCalendar ---------- */
+      /* ---------- FullCalendar Theme ---------- */
       .fc {
         --fc-border-color: #f1e5ef;
         --fc-button-bg-color: var(--color-primary);
@@ -252,6 +206,8 @@ const base = import.meta.env.BASE_URL || "/";
       }
       .fc .fc-button {
         border-radius: 999px;
+        padding: 0.5rem 0.9rem;
+        font-weight: 600;
       }
       .fc-theme-standard td,
       .fc-theme-standard th {
@@ -264,25 +220,41 @@ const base = import.meta.env.BASE_URL || "/";
         border-radius: 8px;
       }
 
-      /* ---------- EVENT styles (รวมให้เหลือชุดเดียว) ---------- */
+      /* ---------- EVENT styles ---------- */
       .fc .fc-daygrid-event,
-      .fc .fc-timegrid-event {
+      .fc .fc-timegrid-event,
+      .fc .fc-list-event {
         border-radius: 10px;
         box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
       }
-      /* ว่าง = เขียว */
       .fc .evt-available {
         border-left: 4px solid var(--avail-border) !important;
       }
       .fc .evt-available .fc-event-main {
         background: var(--avail-bg) !important;
       }
-      /* จองแล้ว = เทา */
       .fc .evt-booked {
         border-left: 4px solid var(--booked-border) !important;
       }
       .fc .evt-booked .fc-event-main {
         background: var(--booked-bg) !important;
+      }
+
+      /* list view spacing */
+      .fc .fc-list-table td,
+      .fc .fc-list-table th {
+        padding: 10px 12px;
+      }
+      .fc .fc-list-event-time {
+        font-weight: 700;
+      }
+      .fc .fc-list-event-title {
+        opacity: 0.9;
+      }
+
+      .fc .evt-available,
+      .fc .evt-booked {
+        cursor: pointer;
       }
 
       /* ====== MODAL ====== */
@@ -305,7 +277,7 @@ const base = import.meta.env.BASE_URL || "/";
         background: rgba(255, 255, 255, 0.86);
         border: 1px solid rgba(255, 255, 255, 0.6);
         border-radius: 16px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         backdrop-filter: blur(10px) saturate(1.1);
         -webkit-backdrop-filter: blur(10px) saturate(1.1);
         padding: 18px 18px 14px;
@@ -367,16 +339,159 @@ const base = import.meta.env.BASE_URL || "/";
       }
       .badge-available {
         background: #eaffef;
-        color: #166534;
+        color: #14532d;
         border-color: #86efac;
       }
       .badge-booked {
-        background: #f3f4f6;
-        color: #374151;
+        background: #f4f4f5;
+        color: #111827;
         border-color: #e5e7eb;
       }
 
+      /* ปุ่มจองในโมดัล */
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 6px;
+      }
+      .btn-line {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        background: #06c755;
+        color: #fff;
+        border: 1px solid #06c755;
+        border-radius: 12px;
+        padding: 8px 12px;
+        font-weight: 700;
+      }
+
+      /* ====== Floating Controls ====== */
+
+      /* CTA ปุ่มจองคิว — มือถือ: เต็มความกว้างติดล่าง */
+      .cta-book {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        z-index: 6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: var(--color-primary);
+        color: #fff;
+        text-decoration: none;
+        padding: 12px 16px;
+        border-radius: 14px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        font-weight: 700;
+        letter-spacing: 0.2px;
+      }
+
+      /* เดสก์ท็อป: ปุ่มจองลอยมุมขวาล่าง และย้ายตัวควบคุมเพลงไปซ้ายล่างเพื่อไม่ทับกัน */
+      @media (min-width: 641px) {
+        .cta-book {
+          left: auto;
+          right: 16px;
+          bottom: 16px;
+          width: auto;
+          padding: 12px 16px;
+        }
+      }
+
+      /* Lofi mini-player */
+      .lofi-control {
+        position: fixed;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid var(--color-accent);
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 10px 30px rgba(247, 140, 188, 0.18);
+      }
+      .lofi-btn {
+        all: unset;
+        cursor: pointer;
+        border: 1px solid var(--color-primary);
+        background: var(--color-primary);
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 13px;
+      }
+      .lofi-btn.secondary {
+        background: transparent;
+        color: var(--color-primary);
+      }
+      .lofi-slider {
+        width: 110px;
+      }
+
+      /* วางตำแหน่งควบคุมเพลงให้ไม่ชน CTA */
+      /* มือถือ: มุมขวาบน */
       @media (max-width: 640px) {
+        .lofi-control {
+          right: 12px;
+          top: 12px;
+          bottom: auto;
+          left: auto;
+        }
+      }
+      /* เดสก์ท็อป: มุมซ้ายล่าง */
+      @media (min-width: 641px) {
+        .lofi-control {
+          left: 16px;
+          bottom: 16px;
+          right: auto;
+          top: auto;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .lofi-control {
+          gap: 8px;
+          padding: 8px 10px;
+        }
+        .lofi-slider {
+          width: 90px;
+        }
+      }
+
+      /* bottom sheet บนมือถือ */
+      @media (max-width: 640px) {
+        .modal-backdrop {
+          align-items: flex-end;
+        }
+        .modal {
+          width: 100%;
+          max-width: none;
+          border-radius: 16px 16px 0 0;
+          max-height: 80vh;
+          overflow: auto;
+          animation: slideUp 0.18s ease-out;
+        }
+        @keyframes slideUp {
+          from {
+            transform: translateY(12px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        .legend {
+          gap: 10px;
+          font-size: 13px;
+        }
+        .title {
+          font-size: clamp(1.1rem, 1.1rem + 1.2vw, 1.6rem);
+        }
         .modal {
           padding: 16px 14px 12px;
         }
@@ -407,6 +522,12 @@ const base = import.meta.env.BASE_URL || "/";
         />
         <img src="/images/lofi-bg-desktop.gif" alt="" decoding="async" />
       </picture>
+      <img
+        class="still"
+        src="/images/lofi-bg-still.jpg"
+        alt=""
+        decoding="async"
+      />
     </div>
 
     <div class="container">
@@ -422,7 +543,7 @@ const base = import.meta.env.BASE_URL || "/";
           style="display:flex; justify-content:space-between; align-items:end; gap:12px; flex-wrap:wrap;"
         >
           <h1 class="title">ตารางคิวว่าง</h1>
-          <div class="legend">
+          <div class="legend" aria-label="สัญลักษณ์สถานะ">
             <span
               ><span class="dot" style="background:var(--avail-border);"></span>
               <span style="color: white;">ว่าง</span></span
@@ -443,12 +564,25 @@ const base = import.meta.env.BASE_URL || "/";
           หากต้องการต่อเล็บ PVC เพ้นท์ลายเยอะๆ จึ้งๆ
           รบกวนลูกค้าจองคิวที่มีติดกัน 2 คิวนะคะ
           ในการจองคิวทางร้านจะขออนุญาตเก็บมัดจำล็อคคิว คิวละ 100.-
-          (ส่วนต่างชำระหน้างานอีกทีค่ะ) **** มัดจำ = ได้คิว ****
-          จองแล้วรบกวนลูกค้ามาตรงเวลานัดนะคะ เลทได้ไม่เกิน 15 นาที กรณีเลื่อน
-          สามารถเลื่อนได้ 1 ครั้ง / กรณียกเลิก = ยึดมัดจำ
+          (ส่วนต่างชำระหน้างานอีกทีค่ะ)
+        </p>
+
+        <p class="foot" style="color: white;">
+          **** มัดจำ = ได้คิว **** จองแล้วรบกวนลูกค้ามาตรงเวลานัดนะคะ
+          เลทได้ไม่เกิน 15 นาที กรณีเลื่อน สามารถเลื่อนได้ 1 ครั้ง / กรณียกเลิก
+          = ยึดมัดจำ
         </p>
       </div>
     </div>
+
+    <!-- CTA ปุ่มจองคิว (มือถือ: เต็มล่าง / เดสก์ท็อป: มุมขวาล่าง) -->
+    <a
+      id="ctaBook"
+      href="https://line.me/R/ti/p/@153nuymp"
+      target="_blank"
+      class="cta-book"
+      aria-label="จองคิวผ่านไลน์">จองคิวผ่านไลน์</a
+    >
 
     <!-- Lofi mini player -->
     <div class="lofi-control" role="group" aria-label="ตัวควบคุมเพลง lofi">
@@ -468,7 +602,7 @@ const base = import.meta.env.BASE_URL || "/";
         value="0.5"
         aria-label="ปรับเสียง"
       />
-      <audio id="lofiAudio" preload="auto" loop autoplay playsinline muted>
+      <audio id="lofiAudio" preload="auto" loop autoplay playsinline>
         <source src="/audio/lofi.mp3" type="audio/mpeg" />
       </audio>
     </div>
@@ -511,6 +645,15 @@ const base = import.meta.env.BASE_URL || "/";
               >-</span
             >
           </div>
+          <div class="modal-actions">
+            <a
+              id="evBookLine"
+              class="btn-line"
+              href="https://line.me/R/ti/p/@153nuymp"
+              target="_blank"
+              rel="noopener">จองคิวผ่านไลน์</a
+            >
+          </div>
         </div>
       </div>
     </div>
@@ -541,6 +684,35 @@ const base = import.meta.env.BASE_URL || "/";
         const calendarEl = document.getElementById("calendar");
         if (!calendarEl) return;
 
+        /* ---------- helpers: LINE booking ---------- */
+        const LINE_OA =
+          typeof LINE_OA_ID === "string" ? LINE_OA_ID : "@your-line-id";
+        const ctaBook = document.getElementById("ctaBook");
+        const evBookLine = document.getElementById("evBookLine");
+
+        function buildLineLink(text = "") {
+          // ลิงก์ส่งข้อความหา OA โดยตรง
+          // เอกสาร: https://line.me/R/oaMessage/<OA_ID>/?<encoded_text>
+          const base =
+            "https://line.me/R/oaMessage/" + encodeURIComponent(LINE_OA) + "/?";
+          return base + encodeURIComponent(text);
+        }
+
+        function defaultLineMessage() {
+          // ข้อความมาตรฐานเมื่อกดปุ่มจองลอย
+          const today = new Date();
+          const pad = (n) => String(n).padStart(2, "0");
+          const msg = `สวัสดีค่ะ สนใจจองคิวทำเล็บวันที่ ${pad(today.getDate())}/${pad(today.getMonth() + 1)}/${today.getFullYear()} ค่ะ`;
+          return msg;
+        }
+
+        // ปุ่มจองลอย (มือถือ/เดสก์ท็อป)
+        if (ctaBook) {
+          ctaBook.href = buildLineLink(defaultLineMessage());
+          ctaBook.target = "_blank";
+          ctaBook.rel = "noopener";
+        }
+
         /* ---------- helpers: modal + format ---------- */
         const modalEl = document.getElementById("eventModal");
         const closeBtn = modalEl?.querySelector("[data-close]");
@@ -551,13 +723,12 @@ const base = import.meta.env.BASE_URL || "/";
         const fTime = document.getElementById("evTime");
         const fNote = document.getElementById("evNote");
 
-        // ใส่ไว้ด้านบนตรง helpers (ใกล้ๆ ที่ประกาศ fmtDate/fmtTime)
         const CAL_TZ = "Asia/Bangkok";
 
         function fmtDate(dt) {
           return FC.formatDate(dt, {
             locale: "th",
-            timeZone: CAL_TZ, // ✅ บังคับใช้โซนเดียวกับปฏิทิน
+            timeZone: CAL_TZ,
             weekday: "short",
             day: "2-digit",
             month: "short",
@@ -567,13 +738,12 @@ const base = import.meta.env.BASE_URL || "/";
         function fmtTime(dt) {
           return FC.formatDate(dt, {
             locale: "th",
-            timeZone: CAL_TZ, // ✅ บังคับใช้โซนเดียวกัน
+            timeZone: CAL_TZ,
             hour: "2-digit",
             minute: "2-digit",
             hour12: false,
           });
         }
-
         function fmtRange(start, end) {
           if (!start) return "-";
           if (!end) return `${fmtDate(start)} เวลา ${fmtTime(start)}`;
@@ -613,6 +783,18 @@ const base = import.meta.env.BASE_URL || "/";
           fTime && (fTime.textContent = fmtRange(start, end));
           fNote && (fNote.textContent = note || "-");
 
+          // ปุ่มจองในโมดัล — พรีฟิลด์ข้อความ
+          if (evBookLine) {
+            const when = fmtRange(start, end);
+            const msg =
+              `สวัสดีค่ะ ขอจองคิวทำเล็บ\n` +
+              `บริการ: ${service || "-"}\n` +
+              (staff ? `ช่าง: ${staff}\n` : "") +
+              `เวลา: ${when}\n` +
+              `ขอรายละเอียดเพิ่มเติมด้วยค่ะ`;
+            evBookLine.href = buildLineLink(msg);
+          }
+
           modalEl.hidden = false;
           const prevOverflow = document.documentElement.style.overflow;
           document.documentElement.dataset._prevOverflow = prevOverflow;
@@ -633,7 +815,7 @@ const base = import.meta.env.BASE_URL || "/";
           if (!modalEl?.hidden && e.key === "Escape") closeEventModal();
         });
 
-        /* ---------- โหลดชีต + ปฏิทิน ---------- */
+        /* ---------- โหลดชีต + events ---------- */
         async function loadEventsFromSheet() {
           const url = calendarEl.getAttribute("data-sheet-url") || "";
           try {
@@ -646,42 +828,52 @@ const base = import.meta.env.BASE_URL || "/";
             });
             const rows = parsed.data || [];
 
+            // ✨ ช่วย normalize เวลาให้เป็น HH:mm:ss เสมอ (รองรับทั้ง HH:mm และ HH:mm:ss)
+            const toHMS = (t) => {
+              if (!t) return "";
+              const s = String(t).trim();
+              const m = s.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+              if (!m) return ""; // รูปแบบไม่ตรง
+              const hh = String(m[1]).padStart(2, "0");
+              const mm = String(m[2]).padStart(2, "0");
+              const ss = m[3] ? String(m[3]).padStart(2, "0") : "00";
+              return `${hh}:${mm}:${ss}`;
+            };
+
             return rows.flatMap((r) => {
-              const date = (r.date || r.DATE || "").trim?.() || "";
-              const start = (r.start_time || r.start || "").trim?.() || "";
-              const end = (r.end_time || r.end || "").trim?.() || "";
-              const service = (r.service || "").trim?.() || "";
-              const staff = (r.staff || "").trim?.() || "";
-              const status =
-                (r.status || "available").toString().toLowerCase().trim?.() ||
-                "available";
-              const note = (r.note || "").trim?.() || "";
+              const date = (r.date || r.DATE || "").toString().trim();
+              const start = toHMS(r.start_time || r.start);
+              const end = toHMS(r.end_time || r.end);
+              const service = (r.service || "").toString().trim();
+              const staff = (r.staff || "").toString().trim();
+              const status = (r.status || "available")
+                .toString()
+                .toLowerCase()
+                .trim();
+              const note = (r.note || "").toString().trim();
+
+              // ถ้าวัน/เวลาไม่ครบ ข้ามไป
               if (!date || !start || !end) return [];
 
               const isAvail = status === "available";
               const tz = "+07:00"; // Asia/Bangkok
+
               return [
                 {
                   title: isAvail ? `ว่าง: ${service}` : "จองแล้ว",
-                  start: `${date}T${start}:00${tz}`, // ✅ ระบุ +07:00
-                  end: `${date}T${end}:00${tz}`, // ✅ ระบุ +07:00
+                  start: `${date}T${start}${tz}`, // ✅ ไม่เติม :00 อีกแล้ว
+                  end: `${date}T${end}${tz}`, // ✅
                   extendedProps: { service, staff, status, note, date },
                   display: "block",
                   classNames: [isAvail ? "evt-available" : "evt-booked"],
-                  backgroundColor: isAvail
-                    ? getComputedStyle(document.documentElement)
-                        .getPropertyValue("--avail-bg")
-                        .trim()
-                    : getComputedStyle(document.documentElement)
-                        .getPropertyValue("--booked-bg")
-                        .trim(),
-                  borderColor: isAvail
-                    ? getComputedStyle(document.documentElement)
-                        .getPropertyValue("--avail-border")
-                        .trim()
-                    : getComputedStyle(document.documentElement)
-                        .getPropertyValue("--booked-border")
-                        .trim(),
+                  backgroundColor: getComputedStyle(document.documentElement)
+                    .getPropertyValue(isAvail ? "--avail-bg" : "--booked-bg")
+                    .trim(),
+                  borderColor: getComputedStyle(document.documentElement)
+                    .getPropertyValue(
+                      isAvail ? "--avail-border" : "--booked-border"
+                    )
+                    .trim(),
                 },
               ];
             });
@@ -694,16 +886,16 @@ const base = import.meta.env.BASE_URL || "/";
         const isSmall = window.matchMedia("(max-width: 640px)").matches;
 
         const calendar = new FC.Calendar(calendarEl, {
-          initialView: isSmall ? "timeGridWeek" : "dayGridMonth",
+          initialView: isSmall ? "listDay" : "dayGridMonth",
           timeZone: "Asia/Bangkok",
           locale: "th",
           firstDay: 1,
           height: "auto",
           nowIndicator: true,
           headerToolbar: {
-            left: "prev,next today",
+            left: "prev,next",
             center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
+            right: isSmall ? "" : "today,dayGridMonth,timeGridWeek,timeGridDay",
           },
           dayMaxEvents: 4,
           displayEventEnd: true,
@@ -714,27 +906,31 @@ const base = import.meta.env.BASE_URL || "/";
           },
           views: { dayGridMonth: { fixedWeekCount: false } },
 
+          moreLinkClick: (arg) => {
+            const small = window.matchMedia("(max-width: 640px)").matches;
+            calendar.changeView(small ? "listDay" : "timeGridDay", arg.date);
+            // return 'day' // (ไม่ต้องคืนค่า เพราะเราเปลี่ยนวิวเองแล้ว)
+          },
+
           events: async (_info, success, failure) => {
             const events = await loadEventsFromSheet();
             if (events.length) success(events);
             else failure(new Error("ไม่มีข้อมูลจากชีต"));
           },
 
-          // ให้สีเขียว “ติด” แน่นอนด้วย eventDidMount (เผื่อ CSS ถูกธีมทับ)
           eventDidMount(info) {
             const p = info.event.extendedProps || {};
             const isAvail = p.status === "available";
             const main = info.el.querySelector(".fc-event-main");
-            if (isAvail) {
-              info.el.style.borderLeft = `4px solid var(--avail-border)`;
-              if (main) main.style.background = `var(--avail-bg)`;
-            } else {
-              info.el.style.borderLeft = `4px solid var(--booked-border)`;
-              if (main) main.style.background = `var(--booked-bg)`;
-            }
+            info.el.style.borderLeft = `4px solid ${isAvail ? "var(--avail-border)" : "var(--booked-border)"}`;
+            if (main)
+              main.style.background = isAvail
+                ? "var(--avail-bg)"
+                : "var(--booked-bg)";
+
+            info.el.style.cursor = "pointer";
           },
 
-          // เปิดโมดัลแทน alert และกัน default action
           eventClick(info) {
             info.jsEvent?.preventDefault?.();
             const p = info.event.extendedProps || {};
@@ -748,16 +944,62 @@ const base = import.meta.env.BASE_URL || "/";
             });
           },
 
+          eventContent(info) {
+            const p = info.event.extendedProps || {};
+            const isAvail = p.status === "available";
+            const timeStart = FC.formatDate(info.event.start, {
+              timeZone: "Asia/Bangkok",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            });
+            const timeEnd = info.event.end
+              ? FC.formatDate(info.event.end, {
+                  timeZone: "Asia/Bangkok",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: false,
+                })
+              : null;
+            const timeText = timeEnd ? `${timeStart}–${timeEnd}` : timeStart;
+
+            if (
+              calendar.view.type.startsWith("list") ||
+              calendar.view.type.startsWith("timeGrid")
+            ) {
+              const root = document.createElement("div");
+              root.style.display = "flex";
+              root.style.alignItems = "center";
+              root.style.gap = "8px";
+              const dot = document.createElement("span");
+              dot.style.width = "8px";
+              dot.style.height = "8px";
+              dot.style.borderRadius = "999px";
+              dot.style.background = isAvail
+                ? "var(--avail-border)"
+                : "#9ca3af";
+              const time = document.createElement("span");
+              time.textContent = timeText;
+              time.style.fontWeight = "700";
+              const badge = document.createElement("span");
+              badge.textContent = isAvail ? "ว่าง" : "จองแล้ว";
+              badge.className = isAvail
+                ? "badge badge-available"
+                : "badge badge-booked";
+              root.append(dot, time, badge);
+              return { domNodes: [root] };
+            }
+            return true;
+          },
+
           windowResize: () => applyResponsive(),
         });
 
         function applyResponsive() {
           const small = window.matchMedia("(max-width: 640px)").matches;
-
-          const targetView = small ? "timeGridWeek" : "dayGridMonth";
-          if (calendar.view.type !== targetView) {
+          const targetView = small ? "listDay" : "dayGridMonth";
+          if (calendar.view.type !== targetView)
             calendar.changeView(targetView);
-          }
 
           calendar.setOption(
             "headerToolbar",
@@ -769,21 +1011,23 @@ const base = import.meta.env.BASE_URL || "/";
                   right: "dayGridMonth,timeGridWeek,timeGridDay",
                 }
           );
-          calendar.setOption("dayMaxEvents", small ? 2 : 4);
+          calendar.setOption("dayMaxEvents", small ? 1 : 4);
           calendar.setOption("aspectRatio", small ? 0.95 : 1.35);
-
           calendar.setOption("slotMinTime", "09:00:00");
           calendar.setOption("slotMaxTime", "22:00:00");
+          calendar.setOption("eventMinHeight", small ? 22 : 0);
         }
 
         applyResponsive();
         calendar.render();
-      });
-    </script>
 
-    <!-- Lofi audio controls (JS ล้วน) -->
-    <script is:inline>
-      (function () {
+        // รีเฟรชข้อมูลทุก ~7 นาที (กันชนพร้อมกันเล็กน้อย)
+        setInterval(
+          () => calendar.refetchEvents(),
+          7 * 60 * 1000 + Math.random() * 30000
+        );
+
+        /* ---------- Lofi autoplay ที่เสถียรขึ้น ---------- */
         const audio = document.getElementById("lofiAudio");
         const btn = document.getElementById("lofiToggle");
         const mute = document.getElementById("lofiMute");
@@ -794,7 +1038,7 @@ const base = import.meta.env.BASE_URL || "/";
         audio.volume = DEFAULT_VOL;
 
         let isPlaying = false;
-        let isMuted = audio.muted || audio.hasAttribute("muted");
+        let isMuted = audio.muted || false;
 
         function syncUI() {
           btn.textContent = isPlaying ? "⏸︎ พัก" : "▶︎ เล่น";
@@ -820,33 +1064,41 @@ const base = import.meta.env.BASE_URL || "/";
           );
         }
 
+        async function tryPlay(unmute = true) {
+          try {
+            if (unmute) audio.muted = false;
+            await audio.play();
+            isPlaying = true;
+            isMuted = audio.muted;
+            syncUI();
+            return true;
+          } catch {
+            return false;
+          }
+        }
+
         async function startAutoplay() {
+          // ขั้น 1: พยายามเล่นแบบ muted เพื่อผ่านนโยบาย
           try {
             audio.muted = true;
             await audio.play();
             isPlaying = true;
             isMuted = true;
-            try {
-              audio.muted = false;
-              await audio.play();
-              isMuted = false;
-            } catch {}
           } catch {
-            onFirstUserGestureOnce(async () => {
-              try {
-                audio.muted = false;
-                await audio.play();
-                isPlaying = true;
-                isMuted = false;
-              } catch {
-                try {
-                  audio.muted = true;
-                  await audio.play();
-                  isPlaying = true;
-                  isMuted = true;
-                } catch {}
+            /* ignore */
+          }
+          // ขั้น 2: ถ้าเล่นได้ค่อย unmute
+          if (isPlaying) {
+            setTimeout(async () => {
+              const ok = await tryPlay(true);
+              if (!ok) {
+                /* ยังเล่นแบบ mute ต่อไป */
               }
-              syncUI();
+            }, 200);
+          } else {
+            // ขั้น 3: ถ้าไม่ได้เลย รอ gesture ครั้งแรก
+            onFirstUserGestureOnce(async () => {
+              (await tryPlay(true)) || (await tryPlay(false)) || (() => {})();
             });
           }
           syncUI();
@@ -855,8 +1107,7 @@ const base = import.meta.env.BASE_URL || "/";
         btn.addEventListener("click", async () => {
           try {
             if (!isPlaying) {
-              await audio.play();
-              isPlaying = true;
+              await tryPlay(true);
             } else {
               audio.pause();
               isPlaying = false;
@@ -870,6 +1121,7 @@ const base = import.meta.env.BASE_URL || "/";
         mute.addEventListener("click", () => {
           isMuted = !isMuted;
           audio.muted = isMuted;
+          if (!isMuted && !isPlaying) tryPlay(true);
           syncUI();
         });
 
@@ -881,16 +1133,22 @@ const base = import.meta.env.BASE_URL || "/";
           } else if (audio.volume > 0 && isMuted) {
             isMuted = false;
             audio.muted = false;
+            if (!isPlaying) tryPlay(true);
           }
           syncUI();
         });
 
+        // re-try กรณีเบราว์เซอร์หยุดเล่นเองเมื่อกลับแท็บ
+        const retry = () => {
+          if (!document.hidden && !audio.paused) return;
+          tryPlay(false);
+        };
         document.addEventListener("visibilitychange", () => {
-          if (!document.hidden && isPlaying && audio.paused) startAutoplay();
+          if (!document.hidden) retry();
         });
-
+        window.addEventListener("pageshow", retry);
         startAutoplay();
-      })();
+      });
     </script>
   </body>
 </html>
