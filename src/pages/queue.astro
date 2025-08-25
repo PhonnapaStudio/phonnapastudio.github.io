@@ -239,8 +239,6 @@ const base = import.meta.env.BASE_URL || "/";
       .fc .evt-booked .fc-event-main {
         background: var(--booked-bg) !important;
       }
-
-      /* list view spacing */
       .fc .fc-list-table td,
       .fc .fc-list-table th {
         padding: 10px 12px;
@@ -348,7 +346,6 @@ const base = import.meta.env.BASE_URL || "/";
         border-color: #e5e7eb;
       }
 
-      /* ปุ่มจองในโมดัล */
       .modal-actions {
         display: flex;
         gap: 10px;
@@ -368,8 +365,6 @@ const base = import.meta.env.BASE_URL || "/";
       }
 
       /* ====== Floating Controls ====== */
-
-      /* CTA ปุ่มจองคิว — มือถือ: เต็มความกว้างติดล่าง */
       .cta-book {
         position: fixed;
         left: 12px;
@@ -388,8 +383,6 @@ const base = import.meta.env.BASE_URL || "/";
         font-weight: 700;
         letter-spacing: 0.2px;
       }
-
-      /* เดสก์ท็อป: ปุ่มจองลอยมุมขวาล่าง และย้ายตัวควบคุมเพลงไปซ้ายล่างเพื่อไม่ทับกัน */
       @media (min-width: 641px) {
         .cta-book {
           left: auto;
@@ -423,17 +416,72 @@ const base = import.meta.env.BASE_URL || "/";
         padding: 6px 10px;
         border-radius: 999px;
         font-size: 13px;
+        display: inline-flex;
+        align-items: center;
       }
       .lofi-btn.secondary {
         background: transparent;
         color: var(--color-primary);
       }
+      .lofi-btn .icon {
+        display: inline-flex;
+        width: 16px;
+        height: 16px;
+      }
+      .lofi-btn .label {
+        margin-left: 6px;
+      }
+
+      /* 🔥 Pink slider */
       .lofi-slider {
+        appearance: none;
         width: 110px;
+        height: 6px;
+        border-radius: 999px;
+        background:
+          linear-gradient(var(--color-primary), var(--color-primary)) 0 /
+            var(--fill, 0%) 100% no-repeat,
+          #ffe4ee;
+        outline: none;
+        transition: background-size 0.15s ease;
+      }
+      .lofi-slider::-webkit-slider-runnable-track {
+        height: 6px;
+        border-radius: 999px;
+        background: transparent;
+      }
+      .lofi-slider::-webkit-slider-thumb {
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--color-primary);
+        border: 2px solid #fff;
+        box-shadow: 0 1px 6px rgba(247, 140, 188, 0.4);
+        margin-top: -5px;
+        cursor: pointer;
+      }
+      .lofi-slider::-moz-range-track {
+        height: 6px;
+        border-radius: 999px;
+        background: transparent;
+      }
+      .lofi-slider::-moz-range-progress {
+        height: 6px;
+        border-radius: 999px;
+        background: var(--color-primary);
+      }
+      .lofi-slider::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--color-primary);
+        border: 2px solid #fff;
+        box-shadow: 0 1px 6px rgba(247, 140, 188, 0.4);
+        cursor: pointer;
       }
 
       /* วางตำแหน่งควบคุมเพลงให้ไม่ชน CTA */
-      /* มือถือ: มุมขวาบน */
       @media (max-width: 640px) {
         .lofi-control {
           right: 12px;
@@ -442,7 +490,6 @@ const base = import.meta.env.BASE_URL || "/";
           left: auto;
         }
       }
-      /* เดสก์ท็อป: มุมซ้ายล่าง */
       @media (min-width: 641px) {
         .lofi-control {
           left: 16px;
@@ -451,7 +498,6 @@ const base = import.meta.env.BASE_URL || "/";
           top: auto;
         }
       }
-
       @media (max-width: 480px) {
         .lofi-control {
           gap: 8px;
@@ -566,7 +612,6 @@ const base = import.meta.env.BASE_URL || "/";
           ในการจองคิวทางร้านจะขออนุญาตเก็บมัดจำล็อคคิว คิวละ 100.-
           (ส่วนต่างชำระหน้างานอีกทีค่ะ)
         </p>
-
         <p class="foot" style="color: white;">
           **** มัดจำ = ได้คิว **** จองแล้วรบกวนลูกค้ามาตรงเวลานัดนะคะ
           เลทได้ไม่เกิน 15 นาที กรณีเลื่อน สามารถเลื่อนได้ 1 ครั้ง / กรณียกเลิก
@@ -575,7 +620,7 @@ const base = import.meta.env.BASE_URL || "/";
       </div>
     </div>
 
-    <!-- CTA ปุ่มจองคิว (มือถือ: เต็มล่าง / เดสก์ท็อป: มุมขวาล่าง) -->
+    <!-- CTA ปุ่มจองคิว -->
     <a
       id="ctaBook"
       href="https://line.me/R/ti/p/@153nuymp"
@@ -586,12 +631,61 @@ const base = import.meta.env.BASE_URL || "/";
 
     <!-- Lofi mini player -->
     <div class="lofi-control" role="group" aria-label="ตัวควบคุมเพลง lofi">
-      <button id="lofiToggle" class="lofi-btn" aria-pressed="false"
-        >▶︎ เล่น</button
+      <!-- เล่น/พัก -->
+      <button
+        id="lofiToggle"
+        class="lofi-btn"
+        aria-pressed="false"
+        aria-label="เล่น/พัก"
       >
-      <button id="lofiMute" class="lofi-btn secondary" aria-pressed="false"
-        >🔇</button
+        <span id="icoPlay" class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"
+            ><path d="M8 5v14l11-7z"></path></svg
+          >
+        </span>
+        <span
+          id="icoPause"
+          class="icon"
+          aria-hidden="true"
+          style="display:none;"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor"
+            ><path d="M6 5h4v14H6zm8 0h4v14h-4z"></path></svg
+          >
+        </span>
+        <span id="lblPlay" class="label">เล่น</span>
+        <span id="lblPause" class="label" style="display:none;">พัก</span>
+      </button>
+
+      <!-- ปิด/เปิดเสียง -->
+      <button
+        id="lofiMute"
+        class="lofi-btn secondary"
+        aria-pressed="false"
+        aria-label="ปิด/เปิดเสียง"
       >
+        <span id="icoVol" class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M3 10v4h4l5 5V5L7 10H3zM16.5 12a3.5 3.5 0 0 0-2.5-3.346v6.692A3.5 3.5 0 0 0 16.5 12z"
+            ></path>
+          </svg>
+        </span>
+        <span
+          id="icoMute"
+          class="icon"
+          aria-hidden="true"
+          style="display:none;"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M3 10v4h4l5 5V5L7 10H3zM19 8l-2 2-2-2-1.5 1.5 2 2-2 2L15 15l2-2 2 2 1.5-1.5-2-2 2-2z"
+            ></path>
+          </svg>
+        </span>
+      </button>
+
+      <!-- สไลเดอร์เสียง -->
       <input
         id="lofiVol"
         class="lofi-slider"
@@ -602,6 +696,7 @@ const base = import.meta.env.BASE_URL || "/";
         value="0.5"
         aria-label="ปรับเสียง"
       />
+
       <audio id="lofiAudio" preload="auto" loop autoplay playsinline>
         <source src="/audio/lofi.mp3" type="audio/mpeg" />
       </audio>
@@ -627,23 +722,19 @@ const base = import.meta.env.BASE_URL || "/";
           </div>
           <div class="modal-row">
             <span class="label">บริการ</span><span id="evService" class="value"
-              >-</span
-            >
+              >-</span>
           </div>
           <div class="modal-row">
             <span class="label">ช่าง</span><span id="evStaff" class="value"
-              >-</span
-            >
+              >-</span>
           </div>
           <div class="modal-row">
             <span class="label">เวลา</span><span id="evTime" class="value"
-              >-</span
-            >
+              >-</span>
           </div>
           <div class="modal-row">
             <span class="label">โน้ต</span><span id="evNote" class="value"
-              >-</span
-            >
+              >-</span>
           </div>
           <div class="modal-actions">
             <a
@@ -691,22 +782,15 @@ const base = import.meta.env.BASE_URL || "/";
         const evBookLine = document.getElementById("evBookLine");
 
         function buildLineLink(text = "") {
-          // ลิงก์ส่งข้อความหา OA โดยตรง
-          // เอกสาร: https://line.me/R/oaMessage/<OA_ID>/?<encoded_text>
           const base =
             "https://line.me/R/oaMessage/" + encodeURIComponent(LINE_OA) + "/?";
           return base + encodeURIComponent(text);
         }
-
         function defaultLineMessage() {
-          // ข้อความมาตรฐานเมื่อกดปุ่มจองลอย
           const today = new Date();
           const pad = (n) => String(n).padStart(2, "0");
-          const msg = `สวัสดีค่ะ สนใจจองคิวทำเล็บวันที่ ${pad(today.getDate())}/${pad(today.getMonth() + 1)}/${today.getFullYear()} ค่ะ`;
-          return msg;
+          return `สวัสดีค่ะ สนใจจองคิวทำเล็บวันที่ ${pad(today.getDate())}/${pad(today.getMonth() + 1)}/${today.getFullYear()} ค่ะ`;
         }
-
-        // ปุ่มจองลอย (มือถือ/เดสก์ท็อป)
         if (ctaBook) {
           ctaBook.href = buildLineLink(defaultLineMessage());
           ctaBook.target = "_blank";
@@ -724,7 +808,6 @@ const base = import.meta.env.BASE_URL || "/";
         const fNote = document.getElementById("evNote");
 
         const CAL_TZ = "Asia/Bangkok";
-
         function fmtDate(dt) {
           return FC.formatDate(dt, {
             locale: "th",
@@ -783,15 +866,9 @@ const base = import.meta.env.BASE_URL || "/";
           fTime && (fTime.textContent = fmtRange(start, end));
           fNote && (fNote.textContent = note || "-");
 
-          // ปุ่มจองในโมดัล — พรีฟิลด์ข้อความ
           if (evBookLine) {
             const when = fmtRange(start, end);
-            const msg =
-              `สวัสดีค่ะ ขอจองคิวทำเล็บ\n` +
-              `บริการ: ${service || "-"}\n` +
-              (staff ? `ช่าง: ${staff}\n` : "") +
-              `เวลา: ${when}\n` +
-              `ขอรายละเอียดเพิ่มเติมด้วยค่ะ`;
+            const msg = `สวัสดีค่ะ ขอจองคิวทำเล็บ\nบริการ: ${service || "-"}\n${staff ? `ช่าง: ${staff}\n` : ""}เวลา: ${when}\nขอรายละเอียดเพิ่มเติมด้วยค่ะ`;
             evBookLine.href = buildLineLink(msg);
           }
 
@@ -828,12 +905,11 @@ const base = import.meta.env.BASE_URL || "/";
             });
             const rows = parsed.data || [];
 
-            // ✨ ช่วย normalize เวลาให้เป็น HH:mm:ss เสมอ (รองรับทั้ง HH:mm และ HH:mm:ss)
             const toHMS = (t) => {
               if (!t) return "";
               const s = String(t).trim();
               const m = s.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
-              if (!m) return ""; // รูปแบบไม่ตรง
+              if (!m) return "";
               const hh = String(m[1]).padStart(2, "0");
               const mm = String(m[2]).padStart(2, "0");
               const ss = m[3] ? String(m[3]).padStart(2, "0") : "00";
@@ -852,17 +928,15 @@ const base = import.meta.env.BASE_URL || "/";
                 .trim();
               const note = (r.note || "").toString().trim();
 
-              // ถ้าวัน/เวลาไม่ครบ ข้ามไป
               if (!date || !start || !end) return [];
-
               const isAvail = status === "available";
-              const tz = "+07:00"; // Asia/Bangkok
+              const tz = "+07:00";
 
               return [
                 {
                   title: isAvail ? `ว่าง: ${service}` : "จองแล้ว",
-                  start: `${date}T${start}${tz}`, // ✅ ไม่เติม :00 อีกแล้ว
-                  end: `${date}T${end}${tz}`, // ✅
+                  start: `${date}T${start}${tz}`,
+                  end: `${date}T${end}${tz}`,
                   extendedProps: { service, staff, status, note, date },
                   display: "block",
                   classNames: [isAvail ? "evt-available" : "evt-booked"],
@@ -909,7 +983,6 @@ const base = import.meta.env.BASE_URL || "/";
           moreLinkClick: (arg) => {
             const small = window.matchMedia("(max-width: 640px)").matches;
             calendar.changeView(small ? "listDay" : "timeGridDay", arg.date);
-            // return 'day' // (ไม่ต้องคืนค่า เพราะเราเปลี่ยนวิวเองแล้ว)
           },
 
           events: async (_info, success, failure) => {
@@ -927,7 +1000,6 @@ const base = import.meta.env.BASE_URL || "/";
               main.style.background = isAvail
                 ? "var(--avail-bg)"
                 : "var(--booked-bg)";
-
             info.el.style.cursor = "pointer";
           },
 
@@ -1027,12 +1099,19 @@ const base = import.meta.env.BASE_URL || "/";
           7 * 60 * 1000 + Math.random() * 30000
         );
 
-        /* ---------- Lofi autoplay ที่เสถียรขึ้น ---------- */
+        /* ---------- Lofi mini-player (อัปเดตไอคอน + สีสไลเดอร์) ---------- */
         const audio = document.getElementById("lofiAudio");
         const btn = document.getElementById("lofiToggle");
         const mute = document.getElementById("lofiMute");
         const vol = document.getElementById("lofiVol");
         if (!(audio && btn && mute && vol)) return;
+
+        const icoPlay = document.getElementById("icoPlay");
+        const icoPause = document.getElementById("icoPause");
+        const lblPlay = document.getElementById("lblPlay");
+        const lblPause = document.getElementById("lblPause");
+        const icoVol = document.getElementById("icoVol");
+        const icoMute = document.getElementById("icoMute");
 
         const DEFAULT_VOL = Number(vol.value || 0.5);
         audio.volume = DEFAULT_VOL;
@@ -1040,11 +1119,28 @@ const base = import.meta.env.BASE_URL || "/";
         let isPlaying = false;
         let isMuted = audio.muted || false;
 
+        function setSliderFill() {
+          const min = Number(vol.min || 0),
+            max = Number(vol.max || 1),
+            val = Number(vol.value);
+          const pct = ((val - min) / (max - min)) * 100;
+          vol.style.setProperty("--fill", pct + "%");
+        }
+
         function syncUI() {
-          btn.textContent = isPlaying ? "⏸︎ พัก" : "▶︎ เล่น";
+          // เล่น/พัก
+          icoPlay.style.display = isPlaying ? "none" : "";
+          lblPlay.style.display = isPlaying ? "none" : "";
+          icoPause.style.display = isPlaying ? "" : "none";
+          lblPause.style.display = isPlaying ? "" : "none";
           btn.setAttribute("aria-pressed", String(isPlaying));
-          mute.textContent = isMuted ? "🔈" : "🔇";
+
+          // mute
+          icoVol.style.display = isMuted ? "none" : "";
+          icoMute.style.display = isMuted ? "" : "none";
           mute.setAttribute("aria-pressed", String(isMuted));
+
+          setSliderFill();
         }
 
         function onFirstUserGestureOnce(handler) {
@@ -1078,27 +1174,19 @@ const base = import.meta.env.BASE_URL || "/";
         }
 
         async function startAutoplay() {
-          // ขั้น 1: พยายามเล่นแบบ muted เพื่อผ่านนโยบาย
           try {
             audio.muted = true;
             await audio.play();
             isPlaying = true;
             isMuted = true;
-          } catch {
-            /* ignore */
-          }
-          // ขั้น 2: ถ้าเล่นได้ค่อย unmute
+          } catch {}
           if (isPlaying) {
             setTimeout(async () => {
-              const ok = await tryPlay(true);
-              if (!ok) {
-                /* ยังเล่นแบบ mute ต่อไป */
-              }
+              await tryPlay(true);
             }, 200);
           } else {
-            // ขั้น 3: ถ้าไม่ได้เลย รอ gesture ครั้งแรก
             onFirstUserGestureOnce(async () => {
-              (await tryPlay(true)) || (await tryPlay(false)) || (() => {})();
+              (await tryPlay(true)) || (await tryPlay(false)) || 0;
             });
           }
           syncUI();
@@ -1138,7 +1226,6 @@ const base = import.meta.env.BASE_URL || "/";
           syncUI();
         });
 
-        // re-try กรณีเบราว์เซอร์หยุดเล่นเองเมื่อกลับแท็บ
         const retry = () => {
           if (!document.hidden && !audio.paused) return;
           tryPlay(false);
@@ -1147,7 +1234,9 @@ const base = import.meta.env.BASE_URL || "/";
           if (!document.hidden) retry();
         });
         window.addEventListener("pageshow", retry);
-        startAutoplay();
+
+        setSliderFill(); // initial fill
+        startAutoplay(); // start
       });
     </script>
   </body>
