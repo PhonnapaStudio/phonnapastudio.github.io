@@ -1,0 +1,36 @@
+---
+import SocialIcon from "./SocialIcon.astro";
+---
+
+<footer class="shared-footer">
+  <div class="shared-footer__brand">
+    <img src="/images/logo.webp" alt="" />
+    <div><strong>Phonnapa Studio</strong><p>ร้านทำเล็บคลองหก งานละเอียด<br />ราคานักศึกษา ใกล้ราชมงคล</p></div>
+  </div>
+  <nav aria-label="เมนูส่วนท้าย">
+    <h3>เมนู</h3>
+    <a href="/#services">บริการ</a><a href="/#portfolio">ผลงาน</a><a href="/#reviews">รีวิว</a><a href="/queue/">คิวว่าง</a><a href="/#contact">ติดต่อ</a>
+  </nav>
+  <div>
+    <h3>ติดต่อ</h3>
+    <a href="tel:0956658550">095-665-8550</a><a class="shared-footer__social" href="https://line.me/ti/p/@153nuymp" target="_blank" rel="noopener" aria-label="ติดต่อ Phonnapa Studio ทาง LINE"><SocialIcon name="line" /> LINE @153nuymp ↗</a><span>คลองหก จ.ปทุมธานี</span>
+  </div>
+  <div>
+    <h3>ติดตาม</h3>
+    <a class="shared-footer__social" href="https://www.instagram.com/phonnapa_studio/" target="_blank" rel="noopener" aria-label="ดู Instagram ของ Phonnapa Studio"><SocialIcon name="instagram" /> Instagram ↗</a><a href="https://www.facebook.com/profile.php?id=100092726523241" target="_blank" rel="noopener">Facebook ↗</a>
+  </div>
+  <small>© 2026 Phonnapa Studio. All rights reserved.</small>
+</footer>
+
+<style>
+  footer.shared-footer { background:#292326; color:#e7dcdf; display:grid; grid-template-columns:2fr repeat(3,1fr); gap:50px; padding:70px clamp(24px,7vw,110px) 35px; font-family:"IBM Plex Sans Thai",sans-serif; font-weight:300; line-height:1.65; }
+  .shared-footer h3 { margin:0 0 12px; font-family:"IBM Plex Sans Thai",sans-serif; font-size:.62rem; font-weight:500; letter-spacing:.16em; text-transform:uppercase; color:#a58e96; }
+  .shared-footer a,.shared-footer span { display:block; color:#b9aeb2; font-size:.72rem; margin:8px 0; text-decoration:none; }
+  .shared-footer a { transition:color .2s; } .shared-footer a:hover { color:#fff; }
+  .shared-footer a.shared-footer__social { display:flex; align-items:center; gap:8px; }
+  .shared-footer__brand { display:flex; gap:15px; } .shared-footer__brand img { display:block; width:36px; height:36px; border-radius:50%; object-fit:cover; filter:grayscale(1); }
+  .shared-footer__brand strong { font:500 1.1rem "Pridi",serif; } .shared-footer__brand p { margin:6px 0 0; color:#978a8f; font-size:.7rem; }
+  .shared-footer small { grid-column:1/-1; border-top:1px solid #423a3e; padding-top:25px; color:#756a6e; font-size:.6rem; }
+  @media (max-width:900px) { footer.shared-footer { grid-template-columns:1fr 1fr; } .shared-footer__brand { grid-column:1/-1; } }
+  @media (max-width:520px) { footer.shared-footer { grid-template-columns:1fr; gap:25px; padding-bottom:85px; } .shared-footer__brand,.shared-footer small { grid-column:auto; } }
+</style>

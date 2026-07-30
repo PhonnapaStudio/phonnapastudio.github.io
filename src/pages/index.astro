@@ -1,454 +1,457 @@
 ---
-import Nav from "../components/Nav.astro";
-import Hero from "../components/Hero.astro";
-import Highlight from "../components/Highlight.astro";
-import Atmosphere from "../components/Atmosphere.astro";
-import Promotion from "../components/Promotion.astro";
-import Review from "../components/Review.astro";
-import Contact from "../components/Contact.astro";
-import Footer from "../components/Footer.astro";
-import Service from "../components/Service.astro";
 import "../styles/global.css";
+import SiteFooter from "../components/SiteFooter.astro";
+import GoogleAnalytics from "../components/GoogleAnalytics.astro";
+import SocialIcon from "../components/SocialIcon.astro";
+
+import { readdirSync } from "node:fs";
+
+const nailServices = [
+  ["ทาเจลสีพื้น", "159 – 189 บาท"],
+  ["ทาเจลกลิตเตอร์", "189 – 199 บาท"],
+  ["ทาเจลลูกแก้ว / สีผง", "199 – 229 บาท"],
+  ["งานฝังอะไหล่", "เริ่มต้น 10 บาท/นิ้ว"],
+  ["งานเพ้นท์", "เริ่มต้น 10 บาท/นิ้ว"],
+  ["งานปั้นนูน", "เริ่มต้น 10 บาท/นิ้ว"],
+  ["เสริมหน้าเล็บ", "59 บาท"],
+  ["ต่อเล็บ PVC (กาวเจล)", "129 บาท"],
+  ["ต่อเล็บ PVC (เจนโคนกาวเจล) — ราคาโปร", "159 บาท"],
+  ["ถอดเล็บ PVC / เจลเสริม", "119 บาท"],
+  ["ถอดเล็บ PVC / เจลเสริม เมื่อทำจากที่ร้าน", "69 บาท"],
+  ["ล้างสีเจลโดยเครื่องเจีย", "39 บาท"],
+  ["ล้างสีเจลโดยเครื่องเจีย เมื่อทำจากที่ร้าน", "ฟรี"],
+  ["ล้างสีเจลโดยเครื่องเจีย + น้ำยา", "59 บาท"],
+  ["CUTICLE REMOVE", "139 – 239 บาท"],
+  ["MINI HAND SPA 5 ขั้นตอน", "189 บาท"],
+  ["MINI FOOT SPA 6 ขั้นตอน", "289 บาท"],
+];
+
+const eyelashServices = [["ลิฟต์ขนตา", "259 บาท"], ["ลิฟต์ขนคิ้ว", "89 บาท"]];
+const serviceSlugs = ["solid-gel", "glitter-gel", "cat-eye-gel", "nail-charms", "nail-art", "sculpted-art", "overlay", "pvc-extension", "pvc-extension-promo", "extension-removal", "extension-removal-shop", "gel-removal", "gel-removal-shop", "gel-removal-soak", "cuticle-remove", "mini-hand-spa", "mini-foot-spa"];
+const serviceIconNames = ["palette", "sparkles", "gem", "jewel", "brush", "flower", "shield", "plus", "plus", "scissors", "scissors", "eraser", "refresh", "droplets", "shield", "spa", "spa"];
+const serviceIconPaths = {
+  palette: '<circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2a10 10 0 0 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.6-1.4-.4-.4-.6-.9-.6-1.4a2 2 0 0 1 2-2H17a5 5 0 0 0 5-5C22 5.7 17.5 2 12 2Z"/>',
+  sparkles: '<path d="m12 3-1.7 3.7L6.5 8.5l3.8 1.8L12 14l1.7-3.7 3.8-1.8-3.8-1.8Z"/><path d="m5 15-.9 2.1L2 18l2.1.9L5 21l.9-2.1L8 18l-2.1-.9Z"/><path d="m19 13-.9 2.1L16 16l2.1.9L19 19l.9-2.1L22 16l-2.1-.9Z"/>',
+  gem: '<path d="M6 3h12l4 6-10 12L2 9Z"/><path d="m2 9 10 4 10-4M8 3l-2 6 6 4 6-4-2-6"/>',
+  jewel: '<path d="M12 3 4 8v8l8 5 8-5V8Z"/><path d="m4 8 8 5 8-5M12 13v8"/>',
+  brush: '<path d="m14.6 17.9-10.7-2.9"/><path d="M18.4 2.6a1 1 0 0 1 3 3l-9.1 9.1-4.2-.7-.7-4.2Z"/><path d="M3.3 14.8c-2 2-2.2 4.1-1.4 5.4.9 1.4 3.4 1.1 5.4-.9 1.1-1.1 1.7-2.4 1.7-3.5"/>',
+  flower: '<path d="M12 5a3 3 0 1 0-5.8 1 3 3 0 1 0-1.6 5.5 3 3 0 1 0 4.2 4.2 3 3 0 1 0 6.4 0 3 3 0 1 0 4.2-4.2A3 3 0 1 0 17.8 6 3 3 0 1 0 12 5Z"/><circle cx="12" cy="12" r="2"/>',
+  shield: '<path d="M20 13c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V5l8-3 8 3Z"/><path d="m9 12 2 2 4-4"/>',
+  plus: '<path d="M12 5v14M5 12h14"/><circle cx="12" cy="12" r="9"/>',
+  scissors: '<circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="m8.7 8.3 12.3 6.2M8.7 15.7 21 9.5"/>',
+  eraser: '<path d="m7 21-4-4a2.8 2.8 0 0 1 0-4L13 3a2.8 2.8 0 0 1 4 0l4 4a2.8 2.8 0 0 1 0 4L11 21Z"/><path d="m6 10 8 8M7 21h10"/>',
+  refresh: '<path d="M20 6v5h-5M4 18v-5h5"/><path d="M6.1 9A7 7 0 0 1 18 6l2 5M4 13l2 5a7 7 0 0 0 11.9-3"/>',
+  droplets: '<path d="M7 16.3c2.2 0 4-1.8 4-4 0-2-4-7.3-4-7.3s-4 5.3-4 7.3c0 2.2 1.8 4 4 4ZM17 21c2.2 0 4-1.8 4-4 0-2-4-7.3-4-7.3S13 15 13 17c0 2.2 1.8 4 4 4Z"/>',
+  spa: '<path d="M12 22c4.4-2 7-5.4 7-9.5-3.5.2-5.8 1.5-7 3.9-1.2-2.4-3.5-3.7-7-3.9 0 4.1 2.6 7.5 7 9.5Z"/><path d="M12 16.4C8.7 14.4 7.2 11 8 6c2.1 1 3.4 2.3 4 4 1-2.8 3-4.8 6-6 .4 3.7-.3 6.7-2.2 8.8"/>',
+  eye: '<path d="M2.1 12a11.6 11.6 0 0 1 19.8 0 11.6 11.6 0 0 1-19.8 0Z"/><circle cx="12" cy="12" r="3"/>',
+};
+const services = [
+  ...nailServices.map(([name, price], index) => ({ slug: serviceSlugs[index], name, price, category: index < 7 ? "NAIL ART" : index < 14 ? "EXTENSION & REMOVAL" : "NAIL CARE", icon: serviceIconNames[index] })),
+  ...eyelashServices.map(([name, price], index) => ({ slug: index === 0 ? "lash-lift" : "brow-lift", name, price, category: "LASH & BROW", icon: "eye" })),
+];
+const publicSupabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || "";
+const publicSupabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "";
+const portfolio = readdirSync(new URL("../../public/images/portfolio/", import.meta.url))
+  .filter((file) => /\.(avif|gif|jpe?g|png|webp)$/i.test(file))
+  .sort();
+const heroVideos = [
+  "/video/SaveClip.App_AQNqS_XEv22UP5aiTs3OpjgbQ8S2j9cQEamkTs4qLTm-Erqoz9RpSjbJU88-YOCGec0oJn1vYFBXu7ZRuCuIMZLF.mp4",
+  "/video/SaveClip.App_AQOYelWCJCAsQdHdojySn6B_TGRXX7Xzd6VGJbSMuSAtYLV2GWiRuIQPY02A9LTGZk9f6_-Lvt70JPzK1iDvoBiQJs24AmMmUmZ4c1Y.mp4",
+];
+const heroPoster = "/images/portfolio/SaveClip.App_468659143_18041636807333583_6477743511698632109_n-ezgif.com-png-to-webp-converter.webp";
+const socialImage = `https://phonnapastudio.github.io${heroPoster}`;
+const studio = ["asmos1.webp", "asmos2.webp", "asmos3.webp"];
+const reviews = [
+  { quote: "พูดจาดีน่ารักมากค่ะ ราคาดีมากจริง ๆ สำหรับนักศึกษา สวยด้วย เลิฟเลย", name: "BAIMON CHONTICHA" },
+  { quote: "เล็บสวยถูกใจ แม่ค้าน่ารัก บริการดีมาก งานละเอียดและเป็นกันเอง", name: "BUSSARA DAUNGJONG" },
+  { quote: "สวยมากค่ะ ชอบมาก บริการดีและกันเองสุด ๆ กลับมาใช้บริการอีกแน่นอน", name: "ญาณิศา ตรีสุโท" },
+];
 ---
 
 <!doctype html>
 <html lang="th">
   <head>
-    <!-- Charset & Viewport -->
+    <GoogleAnalytics />
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- Title & Description -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ร้านทำเล็บคลองหก คลอง 6 ใกล้ราชมงคลธัญบุรี | Phonnapa Studio</title>
-    <meta
-      name="description"
-      content="Phonnapa Studio ร้านทำเล็บคลองหก คลอง 6 ใกล้สะพานชมพู ม.ราชมงคลธัญบุรี บริการทำเล็บเจล ต่อเล็บ PVC เพ้นท์เล็บ สปามือเท้า ขนตา ราคานักศึกษา ค้นหาร้านทำเล็บใกล้ฉัน เจอเราได้เลย!"
-    />
-    <meta
-      name="keywords"
-      content="ร้านทำเล็บคลองหก, ร้านทำเล็บคลอง 6, ทำเล็บใกล้ราชมงคลธัญบุรี, ร้านทำเล็บใกล้ฉัน, เล็บเจลคลองหก, คลอง 6, ร้านทำเล็บสะพานชมพู, ร้านเพ้นท์เล็บราคานักศึกษา, สะพานชมพู, มหาวิทยาลัยราชมงคลธัญบุรี, ทำเล็บใกล้มหาลัย"
-    />
+    <meta name="description" content="Phonnapa Studio ร้านทำเล็บคลองหก คลอง 6 ใกล้สะพานชมพูและมหาวิทยาลัยราชมงคลธัญบุรี บริการทำเล็บเจล เพ้นท์เล็บ ต่อเล็บ PVC สปามือเท้า และลิฟต์ขนตา ราคานักศึกษา เปิดทุกวัน" />
+    <meta name="keywords" content="ร้านทำเล็บคลองหก, ร้านทำเล็บคลอง 6, ทำเล็บใกล้ราชมงคลธัญบุรี, ร้านทำเล็บใกล้ฉัน, เล็บเจลคลองหก, ร้านทำเล็บสะพานชมพู, ต่อเล็บ PVC, เพ้นท์เล็บราคานักศึกษา" />
     <meta name="author" content="Phonnapa Studio" />
     <meta name="application-name" content="Phonnapa Studio" />
     <meta name="robots" content="index, follow" />
+    <meta name="google-site-verification" content="w60tMNbkFtNA_XxIlE1bvUxK2uz-3dqiG_3JbI13wpI" />
     <link rel="canonical" href="https://phonnapastudio.github.io/" />
-
-    <!-- Google Site Verification -->
-    <meta
-      name="google-site-verification"
-      content="w60tMNbkFtNA_XxIlE1bvUxK2uz-3dqiG_3JbI13wpI"
-    />
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://phonnapastudio.github.io/" />
-    <meta
-      property="og:title"
-      content="ร้านทำเล็บคลองหก คลอง 6 ใกล้ราชมงคลธัญบุรี | Phonnapa Studio"
-    />
-    <meta
-      property="og:description"
-      content="ร้านทำเล็บคลองหก คลอง 6 ใกล้สะพานชมพู – เดินทางง่ายจากราชมงคลธัญบุรี ทำเล็บราคานักศึกษา เปิดทุกวัน!"
-    />
-    <meta
-      property="og:image"
-      content="https://phonnapastudio.github.io/images/cover.webp"
-    />
-    <meta property="og:site_name" content="Phonnapa Studio" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="ร้านทำเล็บคลองหก คลอง 6 ใกล้ราชมงคลธัญบุรี | Phonnapa Studio"
-    />
-    <meta
-      name="twitter:description"
-      content="ใกล้มหาลัย ใกล้ฉัน ทำเล็บเจล ต่อเล็บ เพ้นท์เล็บ PVC – เหมาะกับนักศึกษา เดินทางสะดวก สะพานชมพู คลอง 6"
-    />
-    <meta
-      name="twitter:image"
-      content="https://phonnapastudio.github.io/images/cover.webp"
-    />
-
-    <!-- Sitemap -->
     <link rel="sitemap" href="/sitemap-index.xml" />
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/images/logo.webp" />
-
-    <!-- Fonts & Libraries -->
-
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-      rel="stylesheet"
-    />
+    <link rel="icon" href="/images/logo.webp" />
+    <link rel="preload" as="image" href={heroPoster} fetchpriority="high" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <style is:global>
-      html {
-        scroll-behavior: smooth;
-      }
-      :root {
-        --color-primary: #f78cbc;
-        --color-primary-light: #e8d9f1;
-        --color-accent: #ffadc3;
-        --color-accent-light: #fbcff4;
-        --color-bg: #fff9fb;
-        --color-bg-soft: #f5f0fa;
-      }
-
-      body {
-        font-family: "Sarabun", sans-serif;
-        background-color: var(--color-bg);
-      }
-
-      .bg-primary {
-        background-color: var(--color-primary);
-      }
-      .bg-primary-light {
-        background-color: var(--color-primary-light);
-      }
-      .bg-accent {
-        background-color: var(--color-accent);
-      }
-      .bg-accent-light {
-        background-color: var(--color-accent-light);
-      }
-      .bg-soft {
-        background-color: var(--color-bg-soft);
-      }
-
-      .text-primary {
-        color: var(--color-primary);
-      }
-      .text-accent {
-        color: var(--color-accent);
-      }
-
-      .border-primary {
-        border-color: var(--color-primary);
-      }
-      .border-accent {
-        border-color: var(--color-accent);
-      }
-
-      .hover-primary:hover {
-        background-color: var(--color-primary);
-      }
-      .hover-accent:hover {
-        background-color: var(--color-accent);
-      }
-
-      .gradient-bg {
-        background: linear-gradient(
-          135deg,
-          var(--color-bg) 0%,
-          var(--color-bg-soft) 100%
-        );
-      }
-
-      .hero-gradient {
-        background: linear-gradient(
-          135deg,
-          var(--color-primary-light) 0%,
-          var(--color-accent-light) 100%
-        );
-      }
-
-      .card-hover {
-        transition: all 0.3s ease;
-      }
-
-      .card-hover:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(247, 140, 188, 0.15);
-      }
-
-      .star-animation {
-        animation: twinkle 1.5s ease-in-out infinite alternate;
-      }
-
-      @keyframes twinkle {
-        0% {
-          opacity: 0.7;
-        }
-        100% {
-          opacity: 1;
-        }
-      }
-
-      .bounce-slow {
-        animation: bounce 2s infinite;
-      }
-
-      .fade-in-up {
-        animation: fadeInUp 0.8s ease-out;
-      }
-
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .hero-image {
-        background: linear-gradient(
-          45deg,
-          rgba(247, 140, 188, 0.1),
-          rgba(255, 173, 195, 0.1)
-        );
-        backdrop-filter: blur(10px);
-      }
-
-      @keyframes pulse-slow {
-        0%,
-        100% {
-          opacity: 0.3;
-          transform: scale(1);
-        }
-        50% {
-          opacity: 0.5;
-          transform: scale(1.1);
-        }
-      }
-
-      @keyframes pulse-slower {
-        0%,
-        100% {
-          opacity: 0.2;
-          transform: scale(0.95);
-        }
-        50% {
-          opacity: 0.35;
-          transform: scale(1.05);
-        }
-      }
-
-      .animate-pulse-slow {
-        animation: pulse-slow 6s ease-in-out infinite;
-      }
-
-      .animate-pulse-slower {
-        animation: pulse-slower 10s ease-in-out infinite;
-      }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Pridi:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ร้านทำเล็บคลองหก ใกล้ราชมงคลธัญบุรี | Phonnapa Studio" />
+    <meta property="og:description" content="เล็บสวย งานละเอียด ราคานักศึกษา ที่ Phonnapa Studio คลองหก" />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:alt" content="ผลงานทำเล็บโดย Phonnapa Studio ร้านทำเล็บคลองหก" />
+    <meta property="og:url" content="https://phonnapastudio.github.io/" />
+    <meta property="og:site_name" content="Phonnapa Studio" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ร้านทำเล็บคลองหก ใกล้ราชมงคลธัญบุรี | Phonnapa Studio" />
+    <meta name="twitter:description" content="ทำเล็บเจล ต่อเล็บ PVC และเพ้นท์เล็บ ราคานักศึกษา ใกล้สะพานชมพู คลอง 6" />
+    <meta name="twitter:image" content={socialImage} />
   </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#home" aria-label="Phonnapa Studio หน้าหลัก">
+        <img src="/images/logo.webp" alt="โลโก้ Phonnapa Studio" />
+        <span>Phonnapa <i>Studio</i></span>
+      </a>
+      <nav class="desktop-nav" aria-label="เมนูหลัก">
+        <a href="#services">บริการ</a><a href="#portfolio">ผลงาน</a><a href="#reviews">รีวิว</a><a href="/queue/">คิวว่าง</a><a href="#contact">ติดต่อ</a>
+      </nav>
+      <a class="header-cta" href="https://line.me/ti/p/@153nuymp" target="_blank" rel="noopener">จองคิว</a>
+      <button class="menu-toggle" aria-label="เปิดเมนู" aria-expanded="false"><span></span><span></span></button>
+    </header>
 
-  <body class="gradient-bg">
-    <Nav />
+    <main>
+      <section class="hero" id="home">
+        <div class="hero-copy reveal">
+          <p class="eyebrow">NAIL & BEAUTY STUDIO — คลองหก</p>
+          <h1><span>ร้านทำเล็บคลองหก</span><em>เล็บสวยในแบบที่เป็นคุณ</em></h1>
+          <p class="lead">ร้านทำเล็บคลอง 6 ใกล้ มทร.ธัญบุรีและสะพานชมพู งานละเอียดโดยช่างประสบการณ์ พร้อมบริการครบในราคาที่เป็นมิตรกับนักศึกษา</p>
+          <div class="hero-actions">
+            <a class="button button-solid" href="https://line.me/ti/p/@153nuymp" target="_blank" rel="noopener">จองคิวผ่าน LINE <span>↗</span></a>
+            <a class="button button-queue" href="/queue/">เช็กคิวว่าง <span>→</span></a>
+            <a class="button button-ghost" href="#portfolio">ชมผลงาน</a>
+          </div>
+          <dl class="facts">
+            <div><dt>5+</dt><dd>ปีแห่งประสบการณ์</dd></div>
+            <div><dt>Clean</dt><dd>สะอาด ปลอดภัย</dd></div>
+            <div><dt>RMUTT</dt><dd>ใกล้ราชมงคลธัญบุรี</dd></div>
+          </dl>
+        </div>
+        <div class="hero-visual reveal">
+          <video id="hero-video" autoplay muted playsinline preload="metadata" poster={heroPoster} aria-label="วิดีโอผลงานและบรรยากาศ Phonnapa Studio" data-videos={JSON.stringify(heroVideos)}>
+            {heroVideos[0] && <source src={heroVideos[0]} type="video/mp4" />}
+          </video>
+          <div class="rating-card"><strong>98%</strong><span>ลูกค้าบอกต่อ<br />และกลับมาใช้บริการซ้ำ</span></div>
+        </div>
+      </section>
 
-    <Hero />
+      <section class="section services" id="services">
+        <div class="section-heading split-heading reveal">
+          <div><p class="eyebrow">OUR SERVICES</p><h2>บริการความงาม<br />ที่คัดสรรเพื่อคุณ</h2></div>
+          <div class="heading-action"><p>เลือกใช้ผลิตภัณฑ์คุณภาพ ใส่ใจความสะอาด และดูแลทุกขั้นตอนอย่างพิถีพิถัน ตั้งแต่งานสีเรียบหรูไปจนถึงลายเพ้นท์เฉพาะตัว</p><button class="text-toggle" type="button" data-toggle="services-grid" data-more="ดูบริการทั้งหมด" data-less="ดูน้อยลง" aria-expanded="false">ดูบริการทั้งหมด <span>＋</span></button></div>
+        </div>
+        <div class="service-grid" id="services-grid" data-supabase-url={publicSupabaseUrl} data-supabase-key={publicSupabaseKey}>
+          {services.map((service, i) => (
+            <article class="service-card reveal" hidden={i >= 6} data-extra={i >= 6 ? "true" : undefined} data-service-slug={service.slug}>
+              <svg class="service-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={serviceIconPaths[service.icon]}></svg>
+              <h3>{service.name}</h3>
+              <p>{service.category === "NAIL ART" ? "งานละเอียด เลือกสีและดีไซน์ให้เหมาะกับสไตล์ของคุณ" : service.category === "EXTENSION & REMOVAL" ? "ดูแลทรงเล็บและหน้าเล็บอย่างพิถีพิถันทุกขั้นตอน" : service.category === "NAIL CARE" ? "บำรุงและดูแลเล็บมือ–เท้าให้สะอาดและสุขภาพดี" : "เพิ่มความโค้งสวยเป็นธรรมชาติให้ขนตาและคิ้ว"}</p>
+              <div><span>{service.category}</span><strong class="service-price">{service.price}</strong></div>
+            </article>
+          ))}
+        </div>
+        <div class="mobile-toggle-wrap"><button class="button button-ghost section-toggle" type="button" data-toggle="services-grid" data-more="ดูบริการทั้งหมด" data-less="ดูน้อยลง" aria-expanded="false">ดูบริการทั้งหมด <span>＋</span></button></div>
+      </section>
 
-    <Service />
+      <section class="section portfolio" id="portfolio">
+        <div class="portfolio-heading reveal"><div><p class="eyebrow">SELECTED WORK</p><h2>ผลงานของเรา</h2><p>รวมผลงานจริงจากลูกค้าของ Phonnapa Studio</p></div><button class="text-toggle portfolio-toggle" type="button" data-toggle="portfolio-grid" data-more="ดูภาพทั้งหมด" data-less="ดูน้อยลง" aria-expanded="false">ดูภาพทั้งหมด <span>＋</span></button></div>
+        <div class="portfolio-grid" id="portfolio-grid">
+          {portfolio.map((image, i) => <figure class="work reveal" hidden={i >= 6} data-extra={i >= 6 ? "true" : undefined}><img src={`/images/portfolio/${encodeURIComponent(image)}`} alt={`ผลงานทำเล็บจริงจาก Phonnapa Studio แบบที่ ${i + 1}`} loading="lazy" /></figure>)}
+        </div>
+        <div class="mobile-toggle-wrap"><button class="button button-ghost section-toggle" type="button" data-toggle="portfolio-grid" data-more="ดูภาพทั้งหมด" data-less="ดูน้อยลง" aria-expanded="false">ดูภาพทั้งหมด <span>＋</span></button></div>
+      </section>
 
-    <Atmosphere />
+      <section class="promo" id="promotions">
+        <div class="promo-copy reveal"><p class="eyebrow light">NEW CLIENT SPECIAL</p><h2>ลูกค้าใหม่ รับส่วนลด 50 บาท</h2><p>เพิ่มเพื่อน LINE วันนี้ และแสดงหน้าจอที่หน้าร้านเพื่อรับสิทธิ์ พร้อมติดตามคิวว่างและโปรโมชั่นใหม่ก่อนใคร</p><a href="https://line.me/ti/p/@153nuymp" target="_blank" rel="noopener">เพิ่มเพื่อนใน LINE <span>↗</span></a></div>
+        <img src="/images/Gemini_Generated_Image_1z3ixb1z3ixb1z3i-ezgif.com-png-to-webp-converter.webp" alt="บรรยากาศพิเศษสำหรับลูกค้าใหม่ของ Phonnapa Studio" loading="lazy" />
+      </section>
 
-    <Highlight />
+      <section class="section studio" id="studio">
+        <div class="studio-copy reveal">
+          <p class="eyebrow">THE STUDIO</p><h2>ประสบการณ์ที่<br />Phonnapa Studio</h2>
+          <p>สตูดิโอทำเล็บบรรยากาศเป็นส่วนตัวในคลองหก ออกแบบให้ผ่อนคลาย สะอาด และเดินทางสะดวกจากมหาวิทยาลัยราชมงคลธัญบุรี</p>
+          <ul><li><b>♡</b><span><strong>ดูแลเหมือนคนพิเศษ</strong>ใส่ใจรายละเอียดทุกนิ้ว ทุกลาย และทุกความต้องการ</span></li><li><b>✦</b><span><strong>สะอาดและเป็นส่วนตัว</strong>อุปกรณ์ผ่านการดูแล บริการทีละเคส ไม่เร่งงาน</span></li></ul>
+        </div>
+        <div class="studio-gallery reveal">{studio.map((image, i) => <img src={`/images/${image}`} class={`studio-${i + 1}`} alt={`บรรยากาศร้าน Phonnapa Studio ${i + 1}`} loading="lazy" />)}</div>
+      </section>
 
-    <Promotion />
+      <section class="section reviews" id="reviews">
+        <div class="section-heading centered reveal"><p class="eyebrow">TESTIMONIALS</p><h2>เสียงจากลูกค้าของเรา</h2></div>
+        <div class="review-grid">
+          {reviews.map((review) => <blockquote class="reveal"><div class="stars">★★★★★</div><p>“{review.quote}”</p><cite>— {review.name}</cite></blockquote>)}
+        </div>
+      </section>
 
-    <Review />
+      <section class="section contact" id="contact">
+        <div class="contact-info reveal">
+          <p class="eyebrow">VISIT US</p><h2>แวะมาหาเราที่สตูดิโอ</h2>
+          <div class="contact-columns"><div><span>ที่ตั้ง</span><p>คลอง 6 (คลองหก) จ.ปทุมธานี<br />ใกล้มหาวิทยาลัยเทคโนโลยีราชมงคลธัญบุรี</p><span>เวลาเปิดบริการ</span><p>ทุกวัน 09:00 – 21:00 น.</p></div><div><span>ติดต่อ</span><p><a href="tel:0956658550">095-665-8550</a><br /><a href="https://line.me/ti/p/@153nuymp" target="_blank" rel="noopener">LINE @153nuymp ↗</a></p></div></div>
+          <div class="contact-actions"><a class="button button-solid" href="https://maps.google.com/?q=Phonnapa+Studio+คลองหก" target="_blank" rel="noopener">ดูเส้นทาง ↗</a><a class="button button-ghost" href="tel:0956658550">โทรหาร้าน</a></div>
+        </div>
+        <div class="map reveal"><iframe title="แผนที่ Phonnapa Studio" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3870.5359676971934!2d100.74753179999999!3d14.045498099999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x311d79625ecb1b1b%3A0xfd7216b102d9c3ba!2sPhonnapa%20Studio!5e0!3m2!1sth!2sth!4v1750143186870!5m2!1sth!2sth" loading="lazy"></iframe></div>
+      </section>
 
-    <Contact />
+      <section class="closing"><p class="eyebrow">READY WHEN YOU ARE</p><h2>พร้อมสำหรับเล็บสวยชุดใหม่หรือยัง?</h2><p>คิวเต็มไว โดยเฉพาะช่วงเปิดเทอม แนะนำให้จองล่วงหน้าผ่าน LINE</p><a class="button button-solid" href="https://line.me/ti/p/@153nuymp" target="_blank" rel="noopener">จองคิวของคุณ ♡</a></section>
+    </main>
 
-    <Footer />
+    <SiteFooter />
 
-    <button
-      id="scrollToTop"
-      class="fixed bottom-8 right-2 bg-primary hover:bg-opacity-80 text-white p-3 rounded-full shadow-lg transition-all duration-300 opacity-0 invisible z-20"
-    >
-      <i class="fas fa-arrow-up"></i>
-    </button>
+    <div class="mobile-menu"><a href="#services">บริการ</a><a href="#portfolio">ผลงาน</a><a href="#reviews">รีวิว</a><a href="#contact">ติดต่อ</a><a href="/queue/">ดูคิวว่าง</a></div>
+    <a class="floating-instagram" href="https://www.instagram.com/phonnapa_studio/" target="_blank" rel="noopener" aria-label="ดู Instagram ของ Phonnapa Studio" title="Instagram"><SocialIcon name="instagram" /></a>
+    <a class="floating-line" href="https://line.me/ti/p/@153nuymp" target="_blank" rel="noopener" aria-label="ติดต่อและจองคิวผ่าน LINE" title="LINE"><SocialIcon name="line" /></a>
 
-    <!-- Instagram Floating Button (อยู่เหนือปุ่มไลน์) -->
-    <a
-      href="https://instagram.com/phonnapa_studio"
-      target="_blank"
-      rel="noopener"
-      id="igButton"
-      class="fixed bottom-36
-      right-1 bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]
-      hover:opacity-90 text-white p-3 rounded-full shadow-lg transition-all
-      duration-300 z-20"
-      aria-label="ดูรูปใน Instagram"
-    >
-      <i class="fab fa-instagram text-xl"></i>
-    </a>
+    <div id="promotion-popup" class="promotion-popup" hidden>
+      <button class="promotion-backdrop" type="button" aria-label="ปิดโปรโมชั่น" data-promotion-close></button>
+      <section class="promotion-dialog" role="dialog" aria-modal="true" aria-labelledby="promotion-popup-title">
+        <button class="promotion-close" type="button" aria-label="ปิด" data-promotion-close>×</button>
+        <div class="promotion-image-stage"><img id="promotion-popup-image" src="" alt="โปรโมชั่น Phonnapa Studio" /></div>
+        <div class="promotion-popup-footer"><div><span id="promotion-counter"></span><h2 id="promotion-popup-title">โปรโมชั่นพิเศษ</h2><div id="promotion-dots" class="promotion-dots" aria-hidden="true"></div></div><div class="promotion-controls"><button id="promotion-prev" type="button" aria-label="รูปก่อนหน้า">←</button><button id="promotion-next" type="button" aria-label="รูปถัดไป">→</button></div></div>
+      </section>
+    </div>
 
-    <a
-      href="https://line.me/R/ti/p/@153nuymp"
-      target="_blank"
-      rel="noopener"
-      id="lineButton"
-      class="fixed bottom-22 right-1 bg-[#00B900] hover:bg-opacity-90 text-white p-3 rounded-full shadow-lg transition-all duration-300 z-20"
-      aria-label="แชทผ่านไลน์"
-    >
-      <i class="fab fa-line text-xl"></i>
-    </a>
-
-    <!-- Schema.org JSON-LD -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "NailSalon",
-        "name": "Phonnapa Studio",
-        "image": "https://phonnapastudio.github.io/images/cover.webp",
-        "url": "https://phonnapastudio.github.io/",
-        "description": "ร้านทำเล็บคลองหก ใกล้ราชมงคลธัญบุรี – ช่างมืออาชีพ ราคานักศึกษา เพ้นท์เล็บ ต่อเล็บ PVC ขนตา",
-        "priceRange": "฿฿",
-        "telephone": "+66 95 665 8550",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "คลองหลวง",
-          "addressRegion": "ปทุมธานี",
-          "postalCode": "12110",
-          "addressCountry": "TH"
-        },
-        "openingHoursSpecification": [
-          {
-            "@type": "OpeningHoursSpecification",
-            "dayOfWeek": [
-              "Monday",
-              "Tuesday",
-              "Wednesday",
-              "Thursday",
-              "Friday",
-              "Saturday",
-              "Sunday"
-            ],
-            "opens": "09:00",
-            "closes": "21:00"
-          }
-        ]
-      }
-    </script>
-
-    <!-- Main Script -->
+    <script type="application/ld+json" set:html={JSON.stringify({"@context":"https://schema.org","@type":"NailSalon","@id":"https://phonnapastudio.github.io/#business","name":"Phonnapa Studio","alternateName":"ร้านทำเล็บคลองหก Phonnapa Studio","description":"ร้านทำเล็บคลองหก คลอง 6 ใกล้มหาวิทยาลัยเทคโนโลยีราชมงคลธัญบุรี บริการทำเล็บเจล เพ้นท์เล็บ ต่อเล็บ PVC และสปามือเท้า","image":socialImage,"logo":"https://phonnapastudio.github.io/images/logo.webp","url":"https://phonnapastudio.github.io/","telephone":"+66 95 665 8550","priceRange":"฿","address":{"@type":"PostalAddress","addressLocality":"คลองหก","addressRegion":"ปทุมธานี","postalCode":"12110","addressCountry":"TH"},"geo":{"@type":"GeoCoordinates","latitude":14.0454981,"longitude":100.7475318},"hasMap":"https://maps.google.com/?q=Phonnapa+Studio+คลองหก","sameAs":["https://www.instagram.com/phonnapa_studio/","https://www.facebook.com/profile.php?id=100092726523241","https://line.me/ti/p/@153nuymp"],"areaServed":["คลองหก","คลอง 6","มหาวิทยาลัยเทคโนโลยีราชมงคลธัญบุรี"],"openingHoursSpecification":{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"09:00","closes":"21:00"}})} />
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        if (window.innerWidth >= 768) {
-          const link = document.createElement("link");
-          link.rel = "stylesheet";
-          link.href =
-            "https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css";
-          document.head.appendChild(link);
-        }
-        // --------------------------
-        // Navigation active highlight
-        const sections = document.querySelectorAll("section[id]");
-        const navLinks = document.querySelectorAll(".nav-link");
-        const navObserver = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              const id = entry.target.getAttribute("id");
-              const navLink = document.querySelector(
-                `.nav-link[href="#${id}"]`
-              );
-              if (entry.isIntersecting && navLink) {
-                navLinks.forEach((link) =>
-                  link.classList.remove(
-                    "text-primary",
-                    "font-semibold",
-                    "underline"
-                  )
-                );
-                navLink.classList.add(
-                  "text-primary",
-                  "font-semibold",
-                  "underline"
-                );
-              }
-            });
-          },
-          { threshold: 0.3 }
-        );
-        sections.forEach((section) => navObserver.observe(section));
-
-        // --------------------------
-        // Animate on Scroll (skip on mobile)
-        const isMobile = window.innerWidth < 768;
-        const animatedEls = document.querySelectorAll("[data-animate]");
-
-        if (isMobile) {
-          animatedEls.forEach((el) => el.classList.remove("opacity-0"));
-        } else {
-          const animateObserver = new IntersectionObserver(
-            (entries, observer) => {
-              entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                  const el = entry.target;
-                  const animation =
-                    (el as HTMLElement).dataset.animate || "fadeInUp";
-                  el.classList.add(
-                    "animate__animated",
-                    `animate__${animation}`
-                  );
-                  el.classList.remove("opacity-0");
-                  observer.unobserve(el);
-                }
-              });
-            },
-            { threshold: 0.25 }
-          );
-          animatedEls.forEach((el) => animateObserver.observe(el));
-        }
-
-        // --------------------------
-        // Mobile menu toggle
-        const toggleBtn = document.getElementById("menu-toggle");
-        const menu = document.getElementById("mobile-menu");
-        if (toggleBtn && menu) {
-          toggleBtn.addEventListener("click", () => {
-            menu.classList.toggle("hidden");
+      const toggle = document.querySelector('.menu-toggle');
+      const menu = document.querySelector('.mobile-menu');
+      toggle?.addEventListener('click', () => { const open = menu?.classList.toggle('open'); toggle.setAttribute('aria-expanded', String(Boolean(open))); });
+      menu?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => menu.classList.remove('open')));
+      const observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('shown'); observer.unobserve(entry.target); } }), { threshold: .12 });
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      const serviceGrid = document.getElementById('services-grid');
+      async function loadLivePrices() {
+        const url = serviceGrid?.dataset.supabaseUrl;
+        const key = serviceGrid?.dataset.supabaseKey;
+        if (!url || !key) return;
+        try {
+          const response = await fetch(`${url}/rest/v1/services?select=slug,price&active=eq.true`, { headers: { apikey: key, Authorization: `Bearer ${key}` } });
+          if (!response.ok) return;
+          const prices = await response.json();
+          prices.forEach(({ slug, price }) => {
+            const label = serviceGrid.querySelector(`[data-service-slug="${CSS.escape(slug)}"] .service-price`);
+            if (label) label.textContent = price;
           });
-        }
-
-        // --------------------------
-        // Scroll to Top Button
-        const scrollToTopBtn = document.getElementById("scrollToTop");
-        if (scrollToTopBtn) {
-          window.addEventListener("scroll", () => {
-            scrollToTopBtn.classList.toggle(
-              "opacity-0",
-              window.pageYOffset <= 300
-            );
-            scrollToTopBtn.classList.toggle(
-              "invisible",
-              window.pageYOffset <= 300
-            );
+        } catch {}
+      }
+      loadLivePrices();
+      async function loadPromotionPopup() {
+        const url = serviceGrid?.dataset.supabaseUrl;
+        const key = serviceGrid?.dataset.supabaseKey;
+        if (!url || !key) return;
+        try {
+          const response = await fetch(`${url}/rest/v1/promotions?select=id,title,image_url,sort_order&active=eq.true&order=sort_order.asc&limit=10`, { headers: { apikey: key, Authorization: `Bearer ${key}` } });
+          if (!response.ok) return;
+          const promotions = await response.json();
+          if (!promotions.length) return;
+          const popup = document.getElementById('promotion-popup');
+          const popupImage = document.getElementById('promotion-popup-image');
+          const popupTitle = document.getElementById('promotion-popup-title');
+          const counter = document.getElementById('promotion-counter');
+          const dots = document.getElementById('promotion-dots');
+          const controls = popup.querySelector('.promotion-controls');
+          let activeIndex = 0;
+          let closingTimer;
+          const preload = source => new Promise(resolve => {
+            const image = new Image();
+            image.onload = image.onerror = resolve;
+            image.src = source;
           });
-
-          scrollToTopBtn.addEventListener("click", () => {
-            window.scrollTo({ top: 0, behavior: "smooth" });
+          const applyPromotion = () => {
+            const item = promotions[activeIndex];
+            popupImage.src = item.image_url;
+            popupImage.alt = item.title || `โปรโมชั่น Phonnapa Studio รูปที่ ${activeIndex + 1}`;
+            popupTitle.textContent = item.title || 'โปรโมชั่นพิเศษ';
+            counter.textContent = `${activeIndex + 1} / ${promotions.length}`;
+            dots.innerHTML = promotions.map((_, index) => `<i class="${index === activeIndex ? 'active' : ''}"></i>`).join('');
+          };
+          const renderPromotion = async nextIndex => {
+            activeIndex = nextIndex;
+            popup.classList.add('is-changing');
+            await preload(promotions[activeIndex].image_url);
+            applyPromotion();
+            window.requestAnimationFrame(() => popup.classList.remove('is-changing'));
+          };
+          const close = () => {
+            popup.classList.remove('is-visible');
+            document.documentElement.style.overflow = '';
+            window.clearTimeout(closingTimer);
+            closingTimer = window.setTimeout(() => { popup.hidden = true; }, 320);
+          };
+          document.querySelectorAll('[data-promotion-close]').forEach(button => button.addEventListener('click', close));
+          document.getElementById('promotion-prev')?.addEventListener('click', () => renderPromotion((activeIndex - 1 + promotions.length) % promotions.length));
+          document.getElementById('promotion-next')?.addEventListener('click', () => renderPromotion((activeIndex + 1) % promotions.length));
+          window.addEventListener('keydown', event => {
+            if (popup.hidden) return;
+            if (event.key === 'Escape') close();
+            if (event.key === 'ArrowLeft' && promotions.length > 1) renderPromotion((activeIndex - 1 + promotions.length) % promotions.length);
+            if (event.key === 'ArrowRight' && promotions.length > 1) renderPromotion((activeIndex + 1) % promotions.length);
           });
-        }
-
-        // --------------------------
-        // Smooth anchor scroll
-        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-          anchor.addEventListener("click", (e) => {
-            const targetId = anchor.getAttribute("href");
-            if (!targetId) return;
-
-            const target = document.querySelector(targetId);
-            if (target instanceof HTMLElement) {
-              e.preventDefault();
-              target.scrollIntoView({ behavior: "smooth", block: "start" });
-            }
-          });
+          controls.hidden = promotions.length === 1;
+          await preload(promotions[0].image_url);
+          applyPromotion();
+          popup.hidden = false;
+          document.documentElement.style.overflow = 'hidden';
+          window.requestAnimationFrame(() => window.requestAnimationFrame(() => popup.classList.add('is-visible')));
+        } catch {}
+      }
+      loadPromotionPopup();
+      const heroVideo = document.getElementById('hero-video');
+      if (heroVideo instanceof HTMLVideoElement) {
+        const videos = JSON.parse(heroVideo.dataset.videos || '[]');
+        let videoIndex = 0;
+        if (videos.length === 1) heroVideo.loop = true;
+        if (videos.length > 1) heroVideo.addEventListener('ended', () => {
+          videoIndex = (videoIndex + 1) % videos.length;
+          heroVideo.src = videos[videoIndex];
+          heroVideo.play().catch(() => {});
         });
-      });
+      }
+      document.querySelectorAll('[data-toggle]').forEach(button => button.addEventListener('click', () => {
+        const targetId = button.getAttribute('data-toggle');
+        const target = targetId ? document.getElementById(targetId) : null;
+        if (!target) return;
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        target.querySelectorAll('[data-extra="true"]').forEach(item => {
+          if (item instanceof HTMLElement) {
+            item.hidden = expanded;
+            if (!expanded) { item.classList.add('shown'); observer.unobserve(item); }
+          }
+        });
+        document.querySelectorAll(`[data-toggle="${targetId}"]`).forEach(linkedButton => {
+          linkedButton.setAttribute('aria-expanded', String(!expanded));
+          const label = linkedButton.getAttribute(expanded ? 'data-more' : 'data-less') || '';
+          linkedButton.innerHTML = `${label} <span>${expanded ? '＋' : '−'}</span>`;
+        });
+        if (expanded) target.closest('section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }));
     </script>
   </body>
 </html>
+
+<style is:global>
+  :root { --ink:#30292c; --plum:#765463; --wine:#694553; --paper:#f9f5f4; --blush:#efe3e5; --line:#ddd3d4; --muted:#746b6e; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:"IBM Plex Sans Thai",sans-serif; font-weight:300; line-height:1.65; }
+  body, button, a { font-family:"IBM Plex Sans Thai",sans-serif; }
+  img { display:block; width:100%; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,p { margin-top:0; }
+  h1,h2,.brand,.facts dt,.service-card h3,footer strong { font-family:"Pridi",serif; font-weight:500; }
+  h2 { font-size:clamp(2rem,4vw,3rem); line-height:1.18; margin-bottom:1rem; }
+  .site-header { height:86px; padding:0 clamp(24px,5vw,76px); display:grid; grid-template-columns:1fr auto 1fr; align-items:center; background:rgba(249,245,244,.95); position:sticky; top:0; z-index:50; border-bottom:1px solid rgba(105,69,83,.08); }
+  .brand { display:flex; align-items:center; gap:12px; font-size:1.15rem; }
+  .brand img { width:34px; height:34px; border-radius:50%; object-fit:cover; filter:grayscale(1); }
+  .brand i { color:var(--plum); font-style:normal; }
+  .desktop-nav { display:flex; gap:32px; font-size:.78rem; letter-spacing:.08em; }
+  .desktop-nav a { transition:.25s; } .desktop-nav a:hover { color:var(--plum); }
+  .header-cta { justify-self:end; padding:10px 24px; background:var(--wine); color:white; font-size:.75rem; letter-spacing:.08em; }
+  .menu-toggle { display:none; background:none; border:0; padding:10px; }
+  .menu-toggle span { display:block; width:24px; height:1px; margin:6px; background:var(--ink); }
+  .hero { height:620px; min-height:620px; display:grid; grid-template-columns:1.05fr .95fr; padding-left:clamp(24px,7vw,110px); background:#fbf8f7; }
+  .hero-copy { padding:70px clamp(30px,7vw,105px) 45px 0; display:flex; flex-direction:column; justify-content:center; }
+  .eyebrow { color:var(--plum); font-size:.65rem; font-weight:600; letter-spacing:.25em; text-transform:uppercase; margin-bottom:24px; }
+  .eyebrow.light { color:#d8bdc7; }
+  .hero h1 { font-size:clamp(3rem,6vw,6.2rem); line-height:.92; letter-spacing:-.045em; margin-bottom:30px; }
+  .hero h1 span,.hero h1 em { display:block; } .hero h1 span { margin-bottom:10px; font-size:.58em; line-height:1.1; letter-spacing:-.025em; } .hero h1 em { color:var(--plum); font-weight:400; }
+  .lead { color:var(--muted); max-width:590px; font-size:1rem; }
+  .hero-actions,.contact-actions { display:flex; gap:12px; margin-top:24px; flex-wrap:wrap; }
+  .button { padding:13px 25px; text-transform:uppercase; letter-spacing:.12em; font-size:.67rem; font-weight:600; border:1px solid var(--line); display:inline-flex; gap:15px; align-items:center; justify-content:center; transition:.25s; }
+  .button-solid { background:var(--wine); border-color:var(--wine); color:#fff; } .button-solid:hover { background:#4f323d; }
+  .button-queue { background:var(--blush); border-color:#d9c4cb; color:var(--wine); } .button-queue:hover { background:#e5d4d9; border-color:var(--plum); }
+  .button-ghost:hover { border-color:var(--wine); color:var(--wine); }
+  .facts { display:flex; gap:44px; margin:55px 0 0; }
+  .facts div { min-width:90px; } .facts dt { font-size:1.18rem; } .facts dd { margin:0; color:var(--muted); font-size:.62rem; letter-spacing:.07em; text-transform:uppercase; }
+  .hero-visual { position:relative; height:620px; min-height:620px; overflow:visible; }
+  .hero-visual>video { display:block; width:100%; height:100%; object-fit:cover; object-position:center; background:#e9dfe1; }
+  .rating-card { position:absolute; left:-70px; bottom:60px; width:155px; min-height:150px; background:#fff; padding:26px; box-shadow:0 12px 40px rgba(55,36,43,.12); display:flex; flex-direction:column; justify-content:center; }
+  .rating-card strong { color:var(--plum); font-family:"Pridi",serif; font-size:1.5rem; } .rating-card span { font-size:.68rem; color:var(--muted); line-height:1.4; }
+  .section { padding:110px clamp(24px,7vw,110px); }
+  .section-heading { margin-bottom:55px; } .split-heading { display:grid; grid-template-columns:1fr 1fr; gap:10vw; align-items:end; }
+  .heading-action>p { color:var(--muted); max-width:530px; margin-bottom:20px; }
+  .text-toggle { padding:5px 0; border:0; border-bottom:1px solid var(--plum); background:none; color:var(--plum); font-size:.66rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; }
+  .text-toggle span { display:inline-block; margin-left:8px; font-size:.8rem; }
+  .centered { text-align:center; } .centered .eyebrow { margin-bottom:15px; }
+  [hidden] { display:none !important; }
+  .service-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .service-card { min-height:275px; padding:34px 30px; border:1px solid var(--line); background:#fcfaf9; display:flex; flex-direction:column; }
+  .service-icon { width:28px; height:28px; color:var(--plum); }
+  .service-card h3 { font-size:1.22rem; margin:25px 0 8px; }
+  .service-card>p { color:var(--muted); font-size:.8rem; line-height:1.7; }
+  .service-card>div { display:flex; justify-content:space-between; align-items:center; gap:18px; margin-top:auto; padding-top:22px; border-top:1px solid var(--line); }
+  .service-card>div span { color:#9c9295; font-size:.56rem; letter-spacing:.1em; }
+  .service-card>div strong { color:var(--plum); font-family:"Pridi",serif; font-size:1rem; font-weight:500; white-space:nowrap; }
+  .mobile-toggle-wrap { display:none; text-align:center; margin-top:35px; }
+  .portfolio { background:#f5f0ef; }
+  .portfolio-heading { display:flex; justify-content:space-between; align-items:end; margin-bottom:45px; }
+  .portfolio-heading h2 { margin-bottom:6px; } .portfolio-heading .eyebrow { margin-bottom:14px; }
+  .portfolio-heading>div>p:last-child { color:var(--muted); font-size:.8rem; margin:0; }
+  .portfolio-toggle { margin-bottom:7px; }
+  .portfolio-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .work { margin:0 0 14px; overflow:hidden; break-inside:avoid; background:#e8dfdf; }
+  .work img { height:360px; object-fit:cover; transition:transform .6s ease; }
+  .work:hover img { transform:scale(1.025); }
+  .promo { margin:90px clamp(24px,5vw,78px); height:330px; display:grid; grid-template-columns:1.5fr .8fr; background:#2d2629; color:white; overflow:hidden; }
+  .promo-copy { padding:60px; align-self:center; } .promo h2 { font-size:2rem; } .promo-copy>p:not(.eyebrow) { color:#cdbfc4; max-width:590px; }
+  .promo a { display:inline-block; margin-top:15px; padding:12px 22px; background:var(--plum); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; }
+  .promo>img { width:100%; height:330px; object-fit:cover; object-position:center 42%; }
+  .studio { display:grid; grid-template-columns:.85fr 1.15fr; gap:8vw; align-items:center; background:#fbf8f7; }
+  .studio-copy>p:not(.eyebrow) { color:var(--muted); max-width:520px; }
+  .studio ul { list-style:none; padding:20px 0 0; } .studio li { display:flex; gap:16px; margin:22px 0; font-size:.8rem; color:var(--muted); }
+  .studio li b { color:var(--plum); } .studio li strong { display:block; color:var(--ink); text-transform:uppercase; letter-spacing:.1em; font-size:.68rem; margin-bottom:4px; }
+  .studio-gallery { display:grid; grid-template-columns:1fr 1.15fr 1fr; gap:18px; align-items:center; }
+  .studio-gallery img { height:380px; object-fit:cover; } .studio-gallery .studio-1,.studio-gallery .studio-3 { height:310px; }
+  .reviews { background:#f5f0ef; }
+  .review-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:50px; }
+  blockquote { margin:0; text-align:center; } .stars { color:var(--plum); letter-spacing:.18em; margin-bottom:20px; }
+  blockquote p { font-family:"Pridi",serif; font-size:1rem; line-height:1.75; } blockquote cite { font-style:normal; font-size:.61rem; letter-spacing:.12em; color:var(--muted); }
+  .contact { background:var(--blush); display:grid; grid-template-columns:1fr 1fr; gap:6vw; }
+  .contact-columns { display:grid; grid-template-columns:1.3fr 1fr; gap:30px; margin-top:30px; }
+  .contact-columns span { display:block; font-size:.58rem; letter-spacing:.16em; text-transform:uppercase; font-weight:600; margin-top:22px; }
+  .contact-columns p,.contact-columns a { color:var(--muted); font-size:.82rem; }
+  .map { min-height:390px; box-shadow:0 12px 34px rgba(48,41,44,.09); } .map iframe { width:100%; height:100%; border:0; filter:grayscale(1) sepia(.15); }
+  .closing { padding:100px 24px; text-align:center; background:#fbf8f7; } .closing p:not(.eyebrow) { color:var(--muted); } .closing .button { margin-top:18px; }
+  footer { background:#292326; color:#e7dcdf; display:grid; grid-template-columns:2fr repeat(3,1fr); gap:50px; padding:70px clamp(24px,7vw,110px) 35px; }
+  footer h3 { font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; color:#a58e96; }
+  footer a,footer span { display:block; color:#b9aeb2; font-size:.72rem; margin:8px 0; }
+  .footer-brand { display:flex; gap:15px; } .footer-brand img { width:36px; height:36px; border-radius:50%; filter:grayscale(1); } .footer-brand strong { font-size:1.1rem; } .footer-brand p { color:#978a8f; font-size:.7rem; }
+  footer small { grid-column:1/-1; border-top:1px solid #423a3e; padding-top:25px; color:#756a6e; font-size:.6rem; }
+  .mobile-menu { display:none; } .floating-line,.floating-instagram { position:fixed; right:22px; z-index:40; width:52px; height:52px; border-radius:50%; color:white; font-size:1.25rem; display:grid; place-items:center; box-shadow:0 7px 22px rgba(0,0,0,.15); transition:transform .2s,box-shadow .2s; } .floating-line:hover,.floating-instagram:hover { transform:translateY(-2px) scale(1.04); box-shadow:0 10px 28px rgba(0,0,0,.22); } .floating-line { bottom:22px; background:#06c755; } .floating-instagram { bottom:84px; background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045); }
+  .promotion-popup { position:fixed; inset:0; z-index:100; display:grid; place-items:center; padding:22px; opacity:0; visibility:hidden; transition:opacity .3s ease,visibility .3s ease; } .promotion-popup.is-visible { opacity:1; visibility:visible; } .promotion-backdrop { position:absolute; inset:0; border:0; background:rgba(35,27,31,.72); backdrop-filter:blur(10px); cursor:pointer; }
+  .promotion-dialog { position:relative; z-index:1; width:min(560px,94vw); max-height:92vh; border:1px solid rgba(255,255,255,.28); border-radius:20px; background:#fffdfc; box-shadow:0 30px 100px rgba(20,12,16,.4); overflow:hidden; opacity:0; transform:translateY(24px) scale(.97); transition:opacity .38s ease,transform .38s cubic-bezier(.2,.75,.25,1); } .promotion-popup.is-visible .promotion-dialog { opacity:1; transform:none; }
+  .promotion-image-stage { min-height:260px; background:linear-gradient(120deg,#eee4e6,#f8f3f3,#eee4e6); overflow:hidden; } .promotion-image-stage img { width:100%; height:min(68vh,650px); object-fit:contain; opacity:1; transform:scale(1); transition:opacity .22s ease,transform .45s ease; } .promotion-popup.is-changing .promotion-image-stage img { opacity:.18; transform:scale(1.012); } .promotion-close { position:absolute; z-index:2; top:14px; right:14px; width:40px; height:40px; border:1px solid rgba(255,255,255,.3); border-radius:50%; background:rgba(41,35,38,.78); color:white; font-size:1.4rem; cursor:pointer; backdrop-filter:blur(8px); transition:transform .2s,background .2s; } .promotion-close:hover { transform:rotate(5deg) scale(1.06); background:#2d2629; }
+  .promotion-popup-footer { padding:17px 22px 19px; display:flex; justify-content:space-between; align-items:center; gap:20px; border-top:1px solid #eee5e7; } .promotion-popup-footer span { color:var(--plum); font-size:.6rem; letter-spacing:.14em; } .promotion-popup-footer h2 { margin:2px 0 0; font-size:1.3rem; } .promotion-dots { display:flex; gap:5px; margin-top:9px; } .promotion-dots i { width:5px; height:5px; border-radius:50%; background:#d8cdd0; transition:width .25s,background .25s; } .promotion-dots i.active { width:18px; border-radius:5px; background:var(--plum); } .promotion-controls { display:flex; gap:7px; } .promotion-controls button { width:40px; height:40px; border:1px solid var(--line); border-radius:50%; background:#fff; color:var(--plum); cursor:pointer; transition:.2s; } .promotion-controls button:hover { border-color:var(--plum); background:var(--blush); transform:translateY(-1px); }
+  .reveal { opacity:0; transform:translateY(20px); transition:opacity .75s ease,transform .75s ease; } .reveal.shown { opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce) { .reveal { opacity:1; transform:none; transition:none; } html { scroll-behavior:auto; } .promotion-popup,.promotion-dialog,.promotion-image-stage img { transition:none; } }
+  @media (max-width:900px) {
+    .site-header { height:72px; grid-template-columns:1fr auto; } .desktop-nav,.header-cta { display:none; } .menu-toggle { display:block; }
+    .mobile-menu { position:fixed; display:flex; flex-direction:column; top:72px; left:0; right:0; background:#fbf8f7; z-index:49; padding:20px 25px 28px; transform:translateY(-140%); transition:.3s; box-shadow:0 15px 25px rgba(0,0,0,.08); } .mobile-menu.open { transform:none; } .mobile-menu a { padding:9px 0; border-bottom:1px solid var(--line); }
+    .hero { height:auto; min-height:0; grid-template-columns:1fr; padding:0; } .hero-copy { padding:75px 25px 65px; text-align:center; align-items:center; } .hero h1 { font-size:clamp(3rem,13vw,5rem); } .hero-visual { height:520px; min-height:520px; } .rating-card { left:20px; bottom:20px; }
+    .facts { gap:22px; justify-content:center; } .facts div { min-width:0; }
+    .section { padding:80px 25px; } .split-heading,.studio,.contact { grid-template-columns:1fr; } .split-heading { gap:15px; }
+    .service-grid { grid-template-columns:1fr 1fr; } .review-grid { grid-template-columns:1fr; }
+    .portfolio-grid { grid-template-columns:1fr 1fr; }
+    .promo { height:auto; margin:65px 25px; grid-template-columns:1fr; } .promo-copy { padding:45px 30px; } .promo>img { height:230px; object-position:center 38%; }
+    .studio { gap:45px; } .studio-gallery { gap:9px; } .studio-gallery img { height:300px; } .studio-gallery .studio-1,.studio-gallery .studio-3 { height:240px; }
+    .review-grid { gap:45px; } .map { min-height:340px; } footer { grid-template-columns:1fr 1fr; } .footer-brand { grid-column:1/-1; }
+  }
+  @media (max-width:520px) {
+    .brand span { font-size:.98rem; } .hero-visual { height:390px; min-height:390px; } .hero-actions { flex-direction:column; width:100%; } .hero-actions .button { width:100%; }
+    .facts { width:100%; justify-content:space-between; gap:10px; } .facts dt { font-size:1rem; } .facts dd { font-size:.52rem; }
+    .split-heading { display:block; } .heading-action .text-toggle,.portfolio-toggle { display:none; } .mobile-toggle-wrap { display:block; }
+    .service-grid { grid-template-columns:1fr; } .service-card { min-height:255px; }
+    .portfolio-heading { display:block; text-align:center; } .portfolio-heading .eyebrow { margin-bottom:10px; }
+    .portfolio-grid { grid-template-columns:1fr 1fr; gap:8px; } .work { margin-bottom:0; } .work img { height:245px; }
+    .promotion-popup { min-height:100dvh; padding:max(14px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom)); }
+    .promotion-dialog { width:100%; max-height:calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); display:flex; flex-direction:column; }
+    .promotion-image-stage { min-height:0; flex:1 1 auto; display:grid; place-items:center; }
+    .promotion-image-stage img { height:auto; max-height:calc(100dvh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); object-fit:contain; }
+    .promotion-popup-footer { flex:0 0 auto; padding:13px 16px 15px; gap:12px; }
+    .promotion-popup-footer h2 { max-width:230px; font-size:1.08rem; line-height:1.35; }
+    .promotion-controls button { width:36px; height:36px; }
+    .studio-gallery { overflow:hidden; margin:0 -25px; padding:0 12px; } .contact-columns { grid-template-columns:1fr; gap:0; }
+    footer { grid-template-columns:1fr; gap:25px; } .footer-brand,footer small { grid-column:auto; }
+  }
+</style>
