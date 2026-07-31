@@ -1,0 +1,96 @@
+---
+import assets from "../data/assets.generated.json";
+
+interface Props {
+  variant?: "light" | "overlay";
+  class?: string;
+}
+
+const { variant = "light", class: className = "" } = Astro.props;
+const albumCover = assets.album.sources.webp[0]?.src || assets.album.original;
+---
+
+<div class:list={["ambient-music", `ambient-music--${variant}`, className]} data-ambient-music>
+  <button class="ambient-music__toggle" type="button" aria-pressed="false" aria-label="เปิดเพลงบรรยากาศ" data-music-toggle>
+    <img src={albumCover} alt="" width="64" height="64" decoding="async" fetchpriority="low" />
+    <span class="ambient-music__icon">▶</span>
+    <span class="ambient-music__label">เปิดเพลง</span>
+  </button>
+  <audio preload="none" loop data-src="/audio/lofi.mp3" data-music-audio></audio>
+</div>
+
+<script is:inline>
+  document.querySelectorAll('[data-ambient-music]:not([data-music-ready])').forEach(root => {
+    root.setAttribute('data-music-ready', 'true');
+    const audio = root.querySelector('[data-music-audio]');
+    const toggle = root.querySelector('[data-music-toggle]');
+    const icon = root.querySelector('.ambient-music__icon');
+    const label = root.querySelector('.ambient-music__label');
+    let autoTimer;
+
+    const prepare = () => {
+      if (!(audio instanceof HTMLAudioElement) || audio.src) return;
+      audio.src = audio.dataset.src || '';
+      audio.load();
+    };
+    const sync = playing => {
+      toggle?.classList.toggle('playing', playing);
+      toggle?.setAttribute('aria-pressed', String(playing));
+      toggle?.setAttribute('aria-label', playing ? 'พักเพลงบรรยากาศ' : 'เปิดเพลงบรรยากาศ');
+      if (icon) icon.textContent = playing ? 'Ⅱ' : '▶';
+      if (label) label.textContent = playing ? 'พักเพลง' : 'เปิดเพลง';
+    };
+    const play = async fromInteraction => {
+      if (!(audio instanceof HTMLAudioElement) || !audio.paused) return;
+      prepare();
+      try {
+        audio.muted = !fromInteraction;
+        await audio.play();
+        sync(true);
+        if (!fromInteraction) window.setTimeout(() => { audio.muted = false; }, 250);
+      } catch {
+        audio.muted = false;
+        sync(false);
+      }
+    };
+    const startFromInteraction = event => {
+      if (toggle instanceof HTMLElement && event.target instanceof Node && toggle.contains(event.target)) return;
+      window.clearTimeout(autoTimer);
+      play(true);
+    };
+
+    toggle?.addEventListener('click', async () => {
+      window.clearTimeout(autoTimer);
+      if (!(audio instanceof HTMLAudioElement)) return;
+      if (audio.paused) await play(true);
+      else { audio.pause(); sync(false); }
+    });
+    audio?.addEventListener('play', () => sync(true));
+    audio?.addEventListener('pause', () => sync(false));
+
+    if (!navigator.connection?.saveData) {
+      ['pointerdown', 'touchstart', 'keydown'].forEach(eventName => {
+        window.addEventListener(eventName, startFromInteraction, { once: true, passive: true });
+      });
+      const scheduleAutoPlay = () => {
+        autoTimer = window.setTimeout(() => play(false), 15000);
+      };
+      if (document.readyState === 'complete') scheduleAutoPlay();
+      else window.addEventListener('load', scheduleAutoPlay, { once: true });
+    }
+  });
+</script>
+
+<style>
+  .ambient-music { display:inline-flex; }
+  .ambient-music__toggle { display:grid; grid-template-columns:38px 20px auto; gap:10px; align-items:center; padding:8px 16px 8px 8px; border:1px solid rgba(105,69,83,.25); border-radius:30px; background:rgba(255,255,255,.56); color:#694553; cursor:pointer; backdrop-filter:blur(8px); transition:background .2s,border-color .2s,transform .2s; }
+  .ambient-music__toggle:hover { background:#fff; border-color:rgba(105,69,83,.48); transform:translateY(-1px); }
+  .ambient-music__toggle img { display:block; width:38px; height:38px; border-radius:50%; object-fit:cover; }
+  .ambient-music__icon { font-size:.72rem; }
+  .ambient-music__label { font-size:.66rem; font-weight:600; letter-spacing:.08em; }
+  .ambient-music__toggle.playing img { animation:ambient-disc-spin 6s linear infinite; }
+  .ambient-music--overlay .ambient-music__toggle { border-color:rgba(255,255,255,.45); background:rgba(255,255,255,.13); color:#fff; }
+  .ambient-music--overlay .ambient-music__toggle:hover { background:rgba(255,255,255,.22); border-color:rgba(255,255,255,.65); }
+  @keyframes ambient-disc-spin { to { transform:rotate(360deg); } }
+  @media (prefers-reduced-motion:reduce) { .ambient-music__toggle.playing img { animation:none; } }
+</style>

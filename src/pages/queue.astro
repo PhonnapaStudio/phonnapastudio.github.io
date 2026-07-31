@@ -2,9 +2,9 @@
 import SiteFooter from "../components/SiteFooter.astro";
 import GoogleAnalytics from "../components/GoogleAnalytics.astro";
 import BrandLogo from "../components/BrandLogo.astro";
-import OptimizedPicture from "../components/OptimizedPicture.astro";
 import FontPreloads from "../components/FontPreloads.astro";
 import SecurityMeta from "../components/SecurityMeta.astro";
+import AmbientMusic from "../components/AmbientMusic.astro";
 import "../styles/fonts.css";
 import assets from "../data/assets.generated.json";
 
@@ -49,13 +49,8 @@ const base = import.meta.env.BASE_URL || "/";
               <h1>เช็กวันและเวลา<br /><em>คิวว่างของเรา</em></h1>
               <p class="intro-copy">ตรวจสอบคิวว่างร้านทำเล็บคลอง 6 เบื้องต้น แล้วทัก LINE เพื่อให้ทางร้านยืนยันคิวอีกครั้งค่ะ</p>
             </div>
-            <button id="lofi-toggle" class="lofi-toggle" type="button" aria-pressed="false" aria-label="ปิดเพลงบรรยากาศ">
-              <OptimizedPicture asset={assets.album} alt="" sizes="38px" loading="eager" fetchpriority="low" />
-              <span class="music-icon">Ⅱ</span>
-              <span class="music-label">พักเพลง</span>
-            </button>
+            <AmbientMusic variant="overlay" />
           </div>
-          <audio id="lofi-audio" preload="none" autoplay loop data-src="/audio/lofi.mp3"></audio>
         </article>
       </section>
 
@@ -67,10 +62,12 @@ const base = import.meta.env.BASE_URL || "/";
           </div>
 
           <div class="canva-embed">
+            <div class="canva-loading" aria-hidden="true"><span></span>กำลังเตรียมตารางคิว…</div>
             <iframe
               loading="lazy"
               title="ตารางคิว Phonnapa Studio"
-              src="https://www.canva.com/design/DAGiIXfWkYw/0K-nPNNZhs_lWNUMRr-o8g/view?embed"
+              data-src="https://www.canva.com/design/DAGiIXfWkYw/0K-nPNNZhs_lWNUMRr-o8g/view?embed"
+              data-canva-frame
               allowfullscreen
               allow="fullscreen"
             ></iframe>
@@ -115,53 +112,27 @@ const base = import.meta.env.BASE_URL || "/";
     <a class="mobile-line" href="https://line.me/R/ti/p/@153nuymp" target="_blank" rel="noopener">ติดต่อร้านผ่าน LINE</a>
 
     <script is:inline>
-      window.addEventListener("DOMContentLoaded", () => {
-        const lofiAudio = document.getElementById("lofi-audio");
-        const lofiToggle = document.getElementById("lofi-toggle");
-        const musicIcon = lofiToggle?.querySelector(".music-icon");
-        const musicLabel = lofiToggle?.querySelector(".music-label");
-        function prepareAudio() {
-          if (!(lofiAudio instanceof HTMLAudioElement) || lofiAudio.src) return;
-          lofiAudio.src = lofiAudio.dataset.src || "";
-          lofiAudio.load();
+      const canvaFrame = document.querySelector('[data-canva-frame]');
+      const loadCanva = () => {
+        if (!(canvaFrame instanceof HTMLIFrameElement) || canvaFrame.src) return;
+        canvaFrame.addEventListener('load', () => canvaFrame.parentElement?.classList.add('is-loaded'), { once: true });
+        canvaFrame.src = canvaFrame.dataset.src || '';
+      };
+      if (canvaFrame) {
+        if ('IntersectionObserver' in window) {
+          const canvaObserver = new IntersectionObserver(entries => {
+            if (entries.some(entry => entry.isIntersecting && entry.intersectionRatio >= .35)) {
+              canvaObserver.disconnect();
+              loadCanva();
+            }
+          }, { threshold: [.35] });
+          canvaObserver.observe(canvaFrame);
+        } else {
+          window.addEventListener('load', loadCanva, { once: true });
         }
-        function syncMusicUI(playing) {
-          lofiToggle?.classList.toggle("playing", playing);
-          lofiToggle?.setAttribute("aria-pressed", String(playing));
-          lofiToggle?.setAttribute("aria-label", playing ? "พักเพลงบรรยากาศ" : "เปิดเพลงบรรยากาศ");
-          if (musicIcon) musicIcon.textContent = playing ? "Ⅱ" : "▶";
-          if (musicLabel) musicLabel.textContent = playing ? "พักเพลง" : "เปิดเพลง";
-        }
-        lofiToggle?.addEventListener("click", async () => {
-          if (!(lofiAudio instanceof HTMLAudioElement)) return;
-          if (lofiAudio.paused) {
-            prepareAudio();
-            try { await lofiAudio.play(); syncMusicUI(true); }
-            catch { syncMusicUI(false); }
-          } else { lofiAudio.pause(); syncMusicUI(false); }
-        });
-        lofiAudio?.addEventListener("play", () => syncMusicUI(true));
-        lofiAudio?.addEventListener("pause", () => syncMusicUI(false));
-
-        async function startMusicAutomatically() {
-          if (!(lofiAudio instanceof HTMLAudioElement)) return;
-          if (navigator.connection?.saveData) { syncMusicUI(false); return; }
-          try {
-            prepareAudio();
-            lofiAudio.muted = true;
-            await lofiAudio.play();
-            syncMusicUI(true);
-            window.setTimeout(() => { lofiAudio.muted = false; }, 250);
-          } catch {
-            lofiAudio.muted = false;
-            syncMusicUI(false);
-          }
-        }
-        const scheduleMusic = () => window.setTimeout(startMusicAutomatically, 1200);
-        if (document.readyState === "complete") scheduleMusic();
-        else window.addEventListener("load", scheduleMusic, { once: true });
-      });
+      }
     </script>
+
   </body>
 </html>
 
@@ -185,7 +156,13 @@ const base = import.meta.env.BASE_URL || "/";
   .panel-heading .eyebrow { margin-bottom:8px; } .panel-heading h2 { font-size:2.2rem; margin:0; }
   .canva-hint { margin:0 0 6px; color:var(--muted); font-size:.72rem; }
   .canva-embed { position:relative; width:100%; aspect-ratio:5 / 7; overflow:hidden; border:1px solid var(--line); border-radius:12px; background:#fffdfc; box-shadow:0 12px 32px rgba(63,69,81,.14); }
-  .canva-embed iframe { position:absolute; inset:0; width:100%; height:100%; border:0; padding:0; margin:0; }
+  .canva-loading { position:absolute; inset:0; display:grid; place-content:center; justify-items:center; gap:12px; color:var(--muted); font-size:.75rem; }
+  .canva-loading span { width:26px; height:26px; border:2px solid #e7dcdf; border-top-color:var(--plum); border-radius:50%; animation:canva-spin .8s linear infinite; }
+  .canva-embed iframe { position:absolute; inset:0; width:100%; height:100%; border:0; padding:0; margin:0; background:#fffdfc; opacity:0; transition:opacity .25s; }
+  .canva-embed.is-loaded iframe { opacity:1; }
+  .canva-embed.is-loaded .canva-loading { display:none; }
+  @keyframes canva-spin { to { transform:rotate(360deg); } }
+  @media (prefers-reduced-motion:reduce) { .canva-loading span { animation:none; } }
   .canva-link { display:inline-flex; align-items:center; gap:9px; margin-top:17px; color:var(--wine); font-size:.72rem; font-weight:600; letter-spacing:.04em; }
   .canva-link span { transition:transform .2s; } .canva-link:hover span { transform:translate(2px,-2px); }
   .sidebar { display:grid; gap:20px; }
@@ -206,19 +183,12 @@ const base = import.meta.env.BASE_URL || "/";
   .hero-gif-copy .eyebrow { color:#ead5dc; }
   .lofi-overlay .eyebrow { color:#ead9df; margin-bottom:10px; } .lofi-overlay h3 { font-size:1.65rem; line-height:1.25; margin-bottom:8px; }
   .lofi-overlay>div>p:last-child { max-width:260px; color:#e1d5d9; font-size:.73rem; }
-  .lofi-toggle { align-self:flex-start; display:grid; grid-template-columns:38px 20px auto; gap:10px; align-items:center; padding:8px 16px 8px 8px; border:1px solid rgba(255,255,255,.45); border-radius:30px; background:rgba(255,255,255,.13); color:white; backdrop-filter:blur(8px); cursor:pointer; }
-  .lofi-toggle>picture,.lofi-toggle>picture img { display:block; width:38px; height:38px; border-radius:50%; object-fit:cover; }
-  .lofi-toggle .music-icon { font-size:.72rem; } .lofi-toggle .music-label { font-size:.66rem; font-weight:600; letter-spacing:.08em; }
-  .lofi-toggle.playing>picture { animation:disc-spin 6s linear infinite; } .lofi-toggle:hover { background:rgba(255,255,255,.22); }
-  @keyframes disc-spin { to { transform:rotate(360deg); } }
-  @media (prefers-reduced-motion:reduce) { .lofi-toggle.playing>picture { animation:none; } }
   .important-card h3 { font-size:1.35rem; margin-bottom:14px; }
   .note-list p { padding:11px 0; margin:0; border-bottom:1px solid var(--line); color:var(--muted); font-size:.75rem; }
   .note-list .deposit { margin:12px 0; padding:11px; border:1px solid #dbc5cc; background:var(--blush); color:var(--wine); text-align:center; font-size:.82rem; font-weight:600; letter-spacing:.08em; }
   .help { display:flex; justify-content:space-between; gap:50px; align-items:center; padding:70px clamp(24px,7vw,110px); background:#fffdfc; border-top:1px solid var(--line); }
   .help h2 { font-size:2rem; margin-bottom:5px; } .help>div>p:last-child { color:var(--muted); font-size:.8rem; }
   .help-links { display:flex; gap:14px; } .help-links a { min-width:210px; padding:20px; border:1px solid var(--line); display:flex; flex-direction:column; } .help-links span { color:var(--plum); font-size:.58rem; letter-spacing:.15em; } .help-links strong { font-size:.82rem; margin-top:3px; }
-  footer { display:flex; justify-content:space-between; gap:20px; padding:28px clamp(24px,7vw,110px); color:#978a8f; background:#292326; font-size:.62rem; }
   .mobile-line { display:none; }
 
   @media (max-width:980px) {
@@ -233,7 +203,6 @@ const base = import.meta.env.BASE_URL || "/";
     .canva-embed { border-radius:8px; }
     .sidebar { grid-template-columns:1fr; } .contact-card { grid-row:auto; padding:30px 25px; } .important-card { padding:28px 25px; } .lofi-card,.lofi-overlay { min-height:320px; }
     .help { display:block; padding:55px 22px; } .help-links { margin-top:28px; } .help-links a { min-width:0; }
-    footer { display:block; text-align:center; } footer span { display:block; margin:4px; }
     .mobile-line { display:block; position:fixed; z-index:30; left:0; right:0; bottom:0; padding:14px; background:var(--wine); color:white; text-align:center; font-size:.72rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; }
   }
 </style>
