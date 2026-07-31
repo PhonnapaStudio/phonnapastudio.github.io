@@ -1,0 +1,53 @@
+---
+interface SourceItem {
+  width: number;
+  src: string;
+}
+
+interface OptimizedAsset {
+  original: string;
+  width: number;
+  height: number;
+  sources: {
+    avif: SourceItem[];
+    webp: SourceItem[];
+  };
+}
+
+interface Props {
+  asset: OptimizedAsset;
+  alt: string;
+  class?: string;
+  sizes?: string;
+  loading?: "eager" | "lazy";
+  fetchpriority?: "high" | "low" | "auto";
+}
+
+const {
+  asset,
+  alt,
+  class: className,
+  sizes = "100vw",
+  loading = "lazy",
+  fetchpriority = "auto",
+} = Astro.props;
+
+const toSrcset = (items: SourceItem[]) => items.map(({ src, width }) => `${src} ${width}w`).join(", ");
+const fallback = asset.sources.webp.at(-1)?.src || asset.original;
+---
+
+<picture class={className}>
+  <source type="image/avif" srcset={toSrcset(asset.sources.avif)} sizes={sizes} />
+  <source type="image/webp" srcset={toSrcset(asset.sources.webp)} sizes={sizes} />
+  <img
+    src={fallback}
+    srcset={toSrcset(asset.sources.webp)}
+    sizes={sizes}
+    width={asset.width}
+    height={asset.height}
+    alt={alt}
+    loading={loading}
+    decoding="async"
+    fetchpriority={fetchpriority}
+  />
+</picture>

@@ -1,10 +1,12 @@
 ---
-import "../styles/global.css";
+import "../styles/fonts.css";
 import SiteFooter from "../components/SiteFooter.astro";
 import GoogleAnalytics from "../components/GoogleAnalytics.astro";
 import SocialIcon from "../components/SocialIcon.astro";
-
-import { readdirSync } from "node:fs";
+import OptimizedPicture from "../components/OptimizedPicture.astro";
+import FontPreloads from "../components/FontPreloads.astro";
+import SecurityMeta from "../components/SecurityMeta.astro";
+import assets from "../data/assets.generated.json";
 
 const nailServices = [
   ["ทาเจลสีพื้น", "159 – 189 บาท"],
@@ -51,16 +53,18 @@ const services = [
 ];
 const publicSupabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || "";
 const publicSupabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "";
-const portfolio = readdirSync(new URL("../../public/images/portfolio/", import.meta.url))
-  .filter((file) => /\.(avif|gif|jpe?g|png|webp)$/i.test(file))
-  .sort();
+const portfolio = assets.portfolio;
 const heroVideos = [
   "/video/SaveClip.App_AQNqS_XEv22UP5aiTs3OpjgbQ8S2j9cQEamkTs4qLTm-Erqoz9RpSjbJU88-YOCGec0oJn1vYFBXu7ZRuCuIMZLF.mp4",
   "/video/SaveClip.App_AQOYelWCJCAsQdHdojySn6B_TGRXX7Xzd6VGJbSMuSAtYLV2GWiRuIQPY02A9LTGZk9f6_-Lvt70JPzK1iDvoBiQJs24AmMmUmZ4c1Y.mp4",
 ];
-const heroPoster = "/images/portfolio/SaveClip.App_468659143_18041636807333583_6477743511698632109_n-ezgif.com-png-to-webp-converter.webp";
-const socialImage = `https://phonnapastudio.github.io${heroPoster}`;
-const studio = ["asmos1.webp", "asmos2.webp", "asmos3.webp"];
+const heroMobileVideos = [
+  "/video/hero-mobile-01-v1.mp4",
+  "/video/hero-mobile-02-v1.mp4",
+];
+const heroPoster = portfolio.find((asset) => asset.original.includes("468659143")) || portfolio[0];
+const socialImage = `https://phonnapastudio.github.io${heroPoster.sources.webp.at(-1)?.src || heroPoster.original}`;
+const studio = assets.studio;
 const reviews = [
   { quote: "พูดจาดีน่ารักมากค่ะ ราคาดีมากจริง ๆ สำหรับนักศึกษา สวยด้วย เลิฟเลย", name: "BAIMON CHONTICHA" },
   { quote: "เล็บสวยถูกใจ แม่ค้าน่ารัก บริการดีมาก งานละเอียดและเป็นกันเอง", name: "BUSSARA DAUNGJONG" },
@@ -71,9 +75,12 @@ const reviews = [
 <!doctype html>
 <html lang="th">
   <head>
-    <GoogleAnalytics />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <SecurityMeta />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <FontPreloads />
+    <GoogleAnalytics />
     <title>ร้านทำเล็บคลองหก คลอง 6 ใกล้ราชมงคลธัญบุรี | Phonnapa Studio</title>
     <meta name="description" content="Phonnapa Studio ร้านทำเล็บคลองหก คลอง 6 ใกล้สะพานชมพูและมหาวิทยาลัยราชมงคลธัญบุรี บริการทำเล็บเจล เพ้นท์เล็บ ต่อเล็บ PVC สปามือเท้า และลิฟต์ขนตา ราคานักศึกษา เปิดทุกวัน" />
     <meta name="keywords" content="ร้านทำเล็บคลองหก, ร้านทำเล็บคลอง 6, ทำเล็บใกล้ราชมงคลธัญบุรี, ร้านทำเล็บใกล้ฉัน, เล็บเจลคลองหก, ร้านทำเล็บสะพานชมพู, ต่อเล็บ PVC, เพ้นท์เล็บราคานักศึกษา" />
@@ -82,12 +89,8 @@ const reviews = [
     <meta name="robots" content="index, follow" />
     <meta name="google-site-verification" content="w60tMNbkFtNA_XxIlE1bvUxK2uz-3dqiG_3JbI13wpI" />
     <link rel="canonical" href="https://phonnapastudio.github.io/" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="icon" href="/images/logo.webp" />
-    <link rel="preload" as="image" href={heroPoster} fetchpriority="high" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Pridi:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="sitemap" href="/mainmap-index.xml" />
+    <link rel="icon" href={assets.logo.sources.webp[0].src} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="ร้านทำเล็บคลองหก ใกล้ราชมงคลธัญบุรี | Phonnapa Studio" />
     <meta property="og:description" content="เล็บสวย งานละเอียด ราคานักศึกษา ที่ Phonnapa Studio คลองหก" />
@@ -103,7 +106,7 @@ const reviews = [
   <body>
     <header class="site-header">
       <a class="brand" href="#home" aria-label="Phonnapa Studio หน้าหลัก">
-        <img src="/images/logo.webp" alt="โลโก้ Phonnapa Studio" />
+        <OptimizedPicture asset={assets.logo} alt="โลโก้ Phonnapa Studio" sizes="34px" loading="eager" fetchpriority="low" />
         <span>Phonnapa <i>Studio</i></span>
       </a>
       <nav class="desktop-nav" aria-label="เมนูหลัก">
@@ -115,7 +118,7 @@ const reviews = [
 
     <main>
       <section class="hero" id="home">
-        <div class="hero-copy reveal">
+        <div class="hero-copy">
           <p class="eyebrow">NAIL & BEAUTY STUDIO — คลองหก</p>
           <h1><span>ร้านทำเล็บคลองหก</span><em>เล็บสวยในแบบที่เป็นคุณ</em></h1>
           <p class="lead">ร้านทำเล็บคลอง 6 ใกล้ มทร.ธัญบุรีและสะพานชมพู งานละเอียดโดยช่างประสบการณ์ พร้อมบริการครบในราคาที่เป็นมิตรกับนักศึกษา</p>
@@ -130,10 +133,9 @@ const reviews = [
             <div><dt>RMUTT</dt><dd>ใกล้ราชมงคลธัญบุรี</dd></div>
           </dl>
         </div>
-        <div class="hero-visual reveal">
-          <video id="hero-video" autoplay muted playsinline preload="metadata" poster={heroPoster} aria-label="วิดีโอผลงานและบรรยากาศ Phonnapa Studio" data-videos={JSON.stringify(heroVideos)}>
-            {heroVideos[0] && <source src={heroVideos[0]} type="video/mp4" />}
-          </video>
+        <div class="hero-visual">
+          <OptimizedPicture asset={heroPoster} class="hero-poster" alt="ผลงานทำเล็บของ Phonnapa Studio" sizes="(max-width: 900px) 100vw, 48vw" loading="eager" fetchpriority="low" />
+          <video id="hero-video" autoplay muted playsinline preload="none" aria-hidden="true" tabindex="-1" data-videos={JSON.stringify(heroVideos)} data-mobile-videos={JSON.stringify(heroMobileVideos)}></video>
           <div class="rating-card"><strong>98%</strong><span>ลูกค้าบอกต่อ<br />และกลับมาใช้บริการซ้ำ</span></div>
         </div>
       </section>
@@ -159,14 +161,14 @@ const reviews = [
       <section class="section portfolio" id="portfolio">
         <div class="portfolio-heading reveal"><div><p class="eyebrow">SELECTED WORK</p><h2>ผลงานของเรา</h2><p>รวมผลงานจริงจากลูกค้าของ Phonnapa Studio</p></div><button class="text-toggle portfolio-toggle" type="button" data-toggle="portfolio-grid" data-more="ดูภาพทั้งหมด" data-less="ดูน้อยลง" aria-expanded="false">ดูภาพทั้งหมด <span>＋</span></button></div>
         <div class="portfolio-grid" id="portfolio-grid">
-          {portfolio.map((image, i) => <figure class="work reveal" hidden={i >= 6} data-extra={i >= 6 ? "true" : undefined}><img src={`/images/portfolio/${encodeURIComponent(image)}`} alt={`ผลงานทำเล็บจริงจาก Phonnapa Studio แบบที่ ${i + 1}`} loading="lazy" /></figure>)}
+          {portfolio.map((asset, i) => <figure class="work reveal" hidden={i >= 6} data-extra={i >= 6 ? "true" : undefined}><OptimizedPicture asset={asset} alt={`ผลงานทำเล็บจริงจาก Phonnapa Studio แบบที่ ${i + 1}`} sizes="(max-width: 520px) calc(50vw - 29px), (max-width: 900px) calc(50vw - 32px), calc((100vw - 248px) / 3)" loading="lazy" /></figure>)}
         </div>
         <div class="mobile-toggle-wrap"><button class="button button-ghost section-toggle" type="button" data-toggle="portfolio-grid" data-more="ดูภาพทั้งหมด" data-less="ดูน้อยลง" aria-expanded="false">ดูภาพทั้งหมด <span>＋</span></button></div>
       </section>
 
       <section class="promo" id="promotions">
         <div class="promo-copy reveal"><p class="eyebrow light">NEW CLIENT SPECIAL</p><h2>ลูกค้าใหม่ รับส่วนลด 50 บาท</h2><p>เพิ่มเพื่อน LINE วันนี้ และแสดงหน้าจอที่หน้าร้านเพื่อรับสิทธิ์ พร้อมติดตามคิวว่างและโปรโมชั่นใหม่ก่อนใคร</p><a href="https://line.me/ti/p/@153nuymp" target="_blank" rel="noopener">เพิ่มเพื่อนใน LINE <span>↗</span></a></div>
-        <img src="/images/Gemini_Generated_Image_1z3ixb1z3ixb1z3i-ezgif.com-png-to-webp-converter.webp" alt="บรรยากาศพิเศษสำหรับลูกค้าใหม่ของ Phonnapa Studio" loading="lazy" />
+        <OptimizedPicture asset={assets.promo} alt="บรรยากาศพิเศษสำหรับลูกค้าใหม่ของ Phonnapa Studio" sizes="(max-width: 900px) calc(100vw - 50px), 38vw" loading="lazy" />
       </section>
 
       <section class="section studio" id="studio">
@@ -175,7 +177,7 @@ const reviews = [
           <p>สตูดิโอทำเล็บบรรยากาศเป็นส่วนตัวในคลองหก ออกแบบให้ผ่อนคลาย สะอาด และเดินทางสะดวกจากมหาวิทยาลัยราชมงคลธัญบุรี</p>
           <ul><li><b>♡</b><span><strong>ดูแลเหมือนคนพิเศษ</strong>ใส่ใจรายละเอียดทุกนิ้ว ทุกลาย และทุกความต้องการ</span></li><li><b>✦</b><span><strong>สะอาดและเป็นส่วนตัว</strong>อุปกรณ์ผ่านการดูแล บริการทีละเคส ไม่เร่งงาน</span></li></ul>
         </div>
-        <div class="studio-gallery reveal">{studio.map((image, i) => <img src={`/images/${image}`} class={`studio-${i + 1}`} alt={`บรรยากาศร้าน Phonnapa Studio ${i + 1}`} loading="lazy" />)}</div>
+        <div class="studio-gallery reveal">{studio.map((asset, i) => <OptimizedPicture asset={asset} class={`studio-${i + 1}`} alt={`บรรยากาศร้าน Phonnapa Studio ${i + 1}`} sizes="(max-width: 900px) 34vw, 18vw" loading="lazy" />)}</div>
       </section>
 
       <section class="section reviews" id="reviews">
@@ -207,7 +209,7 @@ const reviews = [
       <button class="promotion-backdrop" type="button" aria-label="ปิดโปรโมชั่น" data-promotion-close></button>
       <section class="promotion-dialog" role="dialog" aria-modal="true" aria-labelledby="promotion-popup-title">
         <button class="promotion-close" type="button" aria-label="ปิด" data-promotion-close>×</button>
-        <div class="promotion-image-stage"><img id="promotion-popup-image" src="" alt="โปรโมชั่น Phonnapa Studio" /></div>
+        <div class="promotion-image-stage"><img id="promotion-popup-image" src="" alt="โปรโมชั่น Phonnapa Studio" width="1080" height="1350" loading="lazy" decoding="async" /></div>
         <div class="promotion-popup-footer"><div><span id="promotion-counter"></span><h2 id="promotion-popup-title">โปรโมชั่นพิเศษ</h2><div id="promotion-dots" class="promotion-dots" aria-hidden="true"></div></div><div class="promotion-controls"><button id="promotion-prev" type="button" aria-label="รูปก่อนหน้า">←</button><button id="promotion-next" type="button" aria-label="รูปถัดไป">→</button></div></div>
       </section>
     </div>
@@ -218,8 +220,18 @@ const reviews = [
       const menu = document.querySelector('.mobile-menu');
       toggle?.addEventListener('click', () => { const open = menu?.classList.toggle('open'); toggle.setAttribute('aria-expanded', String(Boolean(open))); });
       menu?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => menu.classList.remove('open')));
-      const observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('shown'); observer.unobserve(entry.target); } }), { threshold: .12 });
-      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      const observer = 'IntersectionObserver' in window
+        ? new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('shown'); observer.unobserve(entry.target); } }), { threshold: .12 })
+        : null;
+      document.querySelectorAll('.reveal').forEach(el => observer ? observer.observe(el) : el.classList.add('shown'));
+      const runWhenIdle = (callback, timeout = 2000) => {
+        if ('requestIdleCallback' in window) window.requestIdleCallback(callback, { timeout });
+        else window.setTimeout(callback, Math.min(timeout, 600));
+      };
+      const afterLoad = (callback) => {
+        if (document.readyState === 'complete') callback();
+        else window.addEventListener('load', callback, { once: true });
+      };
       const serviceGrid = document.getElementById('services-grid');
       async function loadLivePrices() {
         const url = serviceGrid?.dataset.supabaseUrl;
@@ -235,7 +247,6 @@ const reviews = [
           });
         } catch {}
       }
-      loadLivePrices();
       async function loadPromotionPopup() {
         const url = serviceGrid?.dataset.supabaseUrl;
         const key = serviceGrid?.dataset.supabaseKey;
@@ -296,13 +307,42 @@ const reviews = [
           window.requestAnimationFrame(() => window.requestAnimationFrame(() => popup.classList.add('is-visible')));
         } catch {}
       }
-      loadPromotionPopup();
+      afterLoad(() => {
+        runWhenIdle(loadPromotionPopup, 1800);
+        window.setTimeout(() => runWhenIdle(loadLivePrices, 2200), 600);
+      });
       const heroVideo = document.getElementById('hero-video');
       if (heroVideo instanceof HTMLVideoElement) {
-        const videos = JSON.parse(heroVideo.dataset.videos || '[]');
+        const desktopVideos = JSON.parse(heroVideo.dataset.videos || '[]');
+        const mobileVideos = JSON.parse(heroVideo.dataset.mobileVideos || '[]');
+        const videos = window.matchMedia('(max-width: 900px)').matches && mobileVideos.length ? mobileVideos : desktopVideos;
         let videoIndex = 0;
-        if (videos.length === 1) heroVideo.loop = true;
-        if (videos.length > 1) heroVideo.addEventListener('ended', () => {
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const saveData = Boolean(navigator.connection?.saveData);
+        const startVideo = () => {
+          if (!videos.length || heroVideo.dataset.started === 'true') return;
+          heroVideo.dataset.started = 'true';
+          heroVideo.src = videos[0];
+          heroVideo.load();
+          heroVideo.play().catch(() => {});
+        };
+        if (!reduceMotion && !saveData) {
+          afterLoad(() => {
+            if ('IntersectionObserver' in window) {
+              const videoObserver = new IntersectionObserver(entries => {
+                if (entries.some(entry => entry.isIntersecting && entry.intersectionRatio >= .35)) {
+                  videoObserver.disconnect();
+                  runWhenIdle(startVideo, 2500);
+                }
+              }, { threshold: [.35] });
+              videoObserver.observe(heroVideo);
+            } else {
+              runWhenIdle(startVideo, 2500);
+            }
+          });
+        }
+        heroVideo.addEventListener('ended', () => {
+          if (videos.length === 1) { heroVideo.currentTime = 0; heroVideo.play().catch(() => {}); return; }
           videoIndex = (videoIndex + 1) % videos.length;
           heroVideo.src = videos[videoIndex];
           heroVideo.play().catch(() => {});
@@ -316,7 +356,7 @@ const reviews = [
         target.querySelectorAll('[data-extra="true"]').forEach(item => {
           if (item instanceof HTMLElement) {
             item.hidden = expanded;
-            if (!expanded) { item.classList.add('shown'); observer.unobserve(item); }
+            if (!expanded) { item.classList.add('shown'); observer?.unobserve(item); }
           }
         });
         document.querySelectorAll(`[data-toggle="${targetId}"]`).forEach(linkedButton => {
@@ -334,8 +374,8 @@ const reviews = [
   :root { --ink:#30292c; --plum:#765463; --wine:#694553; --paper:#f9f5f4; --blush:#efe3e5; --line:#ddd3d4; --muted:#746b6e; }
   * { box-sizing:border-box; }
   html { scroll-behavior:smooth; }
-  body { margin:0; background:var(--paper); color:var(--ink); font-family:"IBM Plex Sans Thai",sans-serif; font-weight:300; line-height:1.65; }
-  body, button, a { font-family:"IBM Plex Sans Thai",sans-serif; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:"IBM Plex Sans Thai","Noto Sans Thai",Tahoma,sans-serif; font-weight:400; line-height:1.65; }
+  body, button, a { font-family:"IBM Plex Sans Thai","Noto Sans Thai",Tahoma,sans-serif; }
   img { display:block; width:100%; }
   a { color:inherit; text-decoration:none; }
   h1,h2,h3,p { margin-top:0; }
@@ -364,8 +404,10 @@ const reviews = [
   .button-ghost:hover { border-color:var(--wine); color:var(--wine); }
   .facts { display:flex; gap:44px; margin:55px 0 0; }
   .facts div { min-width:90px; } .facts dt { font-size:1.18rem; } .facts dd { margin:0; color:var(--muted); font-size:.62rem; letter-spacing:.07em; text-transform:uppercase; }
-  .hero-visual { position:relative; height:620px; min-height:620px; overflow:visible; }
-  .hero-visual>video { display:block; width:100%; height:100%; object-fit:cover; object-position:center; background:#e9dfe1; }
+  .hero-visual { position:relative; height:620px; min-height:620px; overflow:visible; background:#e9dfe1; }
+  .hero-visual>.hero-poster,.hero-visual>video { position:absolute; inset:0; display:block; width:100%; height:100%; }
+  .hero-visual>.hero-poster img,.hero-visual>video { width:100%; height:100%; object-fit:cover; object-position:center; }
+  .hero-visual>video { z-index:1; }
   .rating-card { position:absolute; left:-70px; bottom:60px; width:155px; min-height:150px; background:#fff; padding:26px; box-shadow:0 12px 40px rgba(55,36,43,.12); display:flex; flex-direction:column; justify-content:center; }
   .rating-card strong { color:var(--plum); font-family:"Pridi",serif; font-size:1.5rem; } .rating-card span { font-size:.68rem; color:var(--muted); line-height:1.4; }
   .section { padding:110px clamp(24px,7vw,110px); }
@@ -381,7 +423,7 @@ const reviews = [
   .service-card h3 { font-size:1.22rem; margin:25px 0 8px; }
   .service-card>p { color:var(--muted); font-size:.8rem; line-height:1.7; }
   .service-card>div { display:flex; justify-content:space-between; align-items:center; gap:18px; margin-top:auto; padding-top:22px; border-top:1px solid var(--line); }
-  .service-card>div span { color:#9c9295; font-size:.56rem; letter-spacing:.1em; }
+  .service-card>div span { color:#746b6e; font-size:.56rem; letter-spacing:.1em; }
   .service-card>div strong { color:var(--plum); font-family:"Pridi",serif; font-size:1rem; font-weight:500; white-space:nowrap; }
   .mobile-toggle-wrap { display:none; text-align:center; margin-top:35px; }
   .portfolio { background:#f5f0ef; }
@@ -390,19 +432,20 @@ const reviews = [
   .portfolio-heading>div>p:last-child { color:var(--muted); font-size:.8rem; margin:0; }
   .portfolio-toggle { margin-bottom:7px; }
   .portfolio-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
-  .work { margin:0 0 14px; overflow:hidden; break-inside:avoid; background:#e8dfdf; }
-  .work img { height:360px; object-fit:cover; transition:transform .6s ease; }
+  .work { aspect-ratio:1; margin:0 0 14px; overflow:hidden; break-inside:avoid; background:#e8dfdf; }
+  .work picture,.work img { display:block; width:100%; height:100%; }
+  .work img { object-fit:cover; transition:transform .6s ease; }
   .work:hover img { transform:scale(1.025); }
   .promo { margin:90px clamp(24px,5vw,78px); height:330px; display:grid; grid-template-columns:1.5fr .8fr; background:#2d2629; color:white; overflow:hidden; }
   .promo-copy { padding:60px; align-self:center; } .promo h2 { font-size:2rem; } .promo-copy>p:not(.eyebrow) { color:#cdbfc4; max-width:590px; }
   .promo a { display:inline-block; margin-top:15px; padding:12px 22px; background:var(--plum); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; }
-  .promo>img { width:100%; height:330px; object-fit:cover; object-position:center 42%; }
+  .promo>picture { display:block; width:100%; height:330px; overflow:hidden; } .promo>picture img { width:100%; height:100%; object-fit:cover; object-position:center 42%; }
   .studio { display:grid; grid-template-columns:.85fr 1.15fr; gap:8vw; align-items:center; background:#fbf8f7; }
   .studio-copy>p:not(.eyebrow) { color:var(--muted); max-width:520px; }
   .studio ul { list-style:none; padding:20px 0 0; } .studio li { display:flex; gap:16px; margin:22px 0; font-size:.8rem; color:var(--muted); }
   .studio li b { color:var(--plum); } .studio li strong { display:block; color:var(--ink); text-transform:uppercase; letter-spacing:.1em; font-size:.68rem; margin-bottom:4px; }
   .studio-gallery { display:grid; grid-template-columns:1fr 1.15fr 1fr; gap:18px; align-items:center; }
-  .studio-gallery img { height:380px; object-fit:cover; } .studio-gallery .studio-1,.studio-gallery .studio-3 { height:310px; }
+  .studio-gallery picture { display:block; height:380px; overflow:hidden; } .studio-gallery img { height:100%; object-fit:cover; } .studio-gallery .studio-1,.studio-gallery .studio-3 { height:310px; }
   .reviews { background:#f5f0ef; }
   .review-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:50px; }
   blockquote { margin:0; text-align:center; } .stars { color:var(--plum); letter-spacing:.18em; margin-bottom:20px; }
@@ -417,14 +460,14 @@ const reviews = [
   footer h3 { font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; color:#a58e96; }
   footer a,footer span { display:block; color:#b9aeb2; font-size:.72rem; margin:8px 0; }
   .footer-brand { display:flex; gap:15px; } .footer-brand img { width:36px; height:36px; border-radius:50%; filter:grayscale(1); } .footer-brand strong { font-size:1.1rem; } .footer-brand p { color:#978a8f; font-size:.7rem; }
-  footer small { grid-column:1/-1; border-top:1px solid #423a3e; padding-top:25px; color:#756a6e; font-size:.6rem; }
+  footer small { grid-column:1/-1; border-top:1px solid #423a3e; padding-top:25px; color:#978a8f; font-size:.6rem; }
   .mobile-menu { display:none; } .floating-line,.floating-instagram { position:fixed; right:22px; z-index:40; width:52px; height:52px; border-radius:50%; color:white; font-size:1.25rem; display:grid; place-items:center; box-shadow:0 7px 22px rgba(0,0,0,.15); transition:transform .2s,box-shadow .2s; } .floating-line:hover,.floating-instagram:hover { transform:translateY(-2px) scale(1.04); box-shadow:0 10px 28px rgba(0,0,0,.22); } .floating-line { bottom:22px; background:#06c755; } .floating-instagram { bottom:84px; background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045); }
   .promotion-popup { position:fixed; inset:0; z-index:100; display:grid; place-items:center; padding:22px; opacity:0; visibility:hidden; transition:opacity .3s ease,visibility .3s ease; } .promotion-popup.is-visible { opacity:1; visibility:visible; } .promotion-backdrop { position:absolute; inset:0; border:0; background:rgba(35,27,31,.72); backdrop-filter:blur(10px); cursor:pointer; }
   .promotion-dialog { position:relative; z-index:1; width:min(560px,94vw); max-height:92vh; border:1px solid rgba(255,255,255,.28); border-radius:20px; background:#fffdfc; box-shadow:0 30px 100px rgba(20,12,16,.4); overflow:hidden; opacity:0; transform:translateY(24px) scale(.97); transition:opacity .38s ease,transform .38s cubic-bezier(.2,.75,.25,1); } .promotion-popup.is-visible .promotion-dialog { opacity:1; transform:none; }
   .promotion-image-stage { min-height:260px; background:linear-gradient(120deg,#eee4e6,#f8f3f3,#eee4e6); overflow:hidden; } .promotion-image-stage img { width:100%; height:min(68vh,650px); object-fit:contain; opacity:1; transform:scale(1); transition:opacity .22s ease,transform .45s ease; } .promotion-popup.is-changing .promotion-image-stage img { opacity:.18; transform:scale(1.012); } .promotion-close { position:absolute; z-index:2; top:14px; right:14px; width:40px; height:40px; border:1px solid rgba(255,255,255,.3); border-radius:50%; background:rgba(41,35,38,.78); color:white; font-size:1.4rem; cursor:pointer; backdrop-filter:blur(8px); transition:transform .2s,background .2s; } .promotion-close:hover { transform:rotate(5deg) scale(1.06); background:#2d2629; }
   .promotion-popup-footer { padding:17px 22px 19px; display:flex; justify-content:space-between; align-items:center; gap:20px; border-top:1px solid #eee5e7; } .promotion-popup-footer span { color:var(--plum); font-size:.6rem; letter-spacing:.14em; } .promotion-popup-footer h2 { margin:2px 0 0; font-size:1.3rem; } .promotion-dots { display:flex; gap:5px; margin-top:9px; } .promotion-dots i { width:5px; height:5px; border-radius:50%; background:#d8cdd0; transition:width .25s,background .25s; } .promotion-dots i.active { width:18px; border-radius:5px; background:var(--plum); } .promotion-controls { display:flex; gap:7px; } .promotion-controls button { width:40px; height:40px; border:1px solid var(--line); border-radius:50%; background:#fff; color:var(--plum); cursor:pointer; transition:.2s; } .promotion-controls button:hover { border-color:var(--plum); background:var(--blush); transform:translateY(-1px); }
-  .reveal { opacity:0; transform:translateY(20px); transition:opacity .75s ease,transform .75s ease; } .reveal.shown { opacity:1; transform:none; }
-  @media (prefers-reduced-motion:reduce) { .reveal { opacity:1; transform:none; transition:none; } html { scroll-behavior:auto; } .promotion-popup,.promotion-dialog,.promotion-image-stage img { transition:none; } }
+  .js .reveal { opacity:0; transform:translateY(20px); transition:opacity .75s ease,transform .75s ease; } .js .reveal.shown { opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce) { .js .reveal { opacity:1; transform:none; transition:none; } html { scroll-behavior:auto; } .promotion-popup,.promotion-dialog,.promotion-image-stage img { transition:none; } }
   @media (max-width:900px) {
     .site-header { height:72px; grid-template-columns:1fr auto; } .desktop-nav,.header-cta { display:none; } .menu-toggle { display:block; }
     .mobile-menu { position:fixed; display:flex; flex-direction:column; top:72px; left:0; right:0; background:#fbf8f7; z-index:49; padding:20px 25px 28px; transform:translateY(-140%); transition:.3s; box-shadow:0 15px 25px rgba(0,0,0,.08); } .mobile-menu.open { transform:none; } .mobile-menu a { padding:9px 0; border-bottom:1px solid var(--line); }
@@ -433,8 +476,8 @@ const reviews = [
     .section { padding:80px 25px; } .split-heading,.studio,.contact { grid-template-columns:1fr; } .split-heading { gap:15px; }
     .service-grid { grid-template-columns:1fr 1fr; } .review-grid { grid-template-columns:1fr; }
     .portfolio-grid { grid-template-columns:1fr 1fr; }
-    .promo { height:auto; margin:65px 25px; grid-template-columns:1fr; } .promo-copy { padding:45px 30px; } .promo>img { height:230px; object-position:center 38%; }
-    .studio { gap:45px; } .studio-gallery { gap:9px; } .studio-gallery img { height:300px; } .studio-gallery .studio-1,.studio-gallery .studio-3 { height:240px; }
+    .promo { height:auto; margin:65px 25px; grid-template-columns:1fr; } .promo-copy { padding:45px 30px; } .promo>picture { height:230px; } .promo>picture img { object-position:center 38%; }
+    .studio { gap:45px; } .studio-gallery { gap:9px; } .studio-gallery picture { height:300px; } .studio-gallery .studio-1,.studio-gallery .studio-3 { height:240px; }
     .review-grid { gap:45px; } .map { min-height:340px; } footer { grid-template-columns:1fr 1fr; } .footer-brand { grid-column:1/-1; }
   }
   @media (max-width:520px) {
@@ -443,7 +486,7 @@ const reviews = [
     .split-heading { display:block; } .heading-action .text-toggle,.portfolio-toggle { display:none; } .mobile-toggle-wrap { display:block; }
     .service-grid { grid-template-columns:1fr; } .service-card { min-height:255px; }
     .portfolio-heading { display:block; text-align:center; } .portfolio-heading .eyebrow { margin-bottom:10px; }
-    .portfolio-grid { grid-template-columns:1fr 1fr; gap:8px; } .work { margin-bottom:0; } .work img { height:245px; }
+    .portfolio-grid { grid-template-columns:1fr 1fr; gap:8px; } .work { margin-bottom:0; }
     .promotion-popup { min-height:100dvh; padding:max(14px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom)); }
     .promotion-dialog { width:100%; max-height:calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); display:flex; flex-direction:column; }
     .promotion-image-stage { min-height:0; flex:1 1 auto; display:grid; place-items:center; }

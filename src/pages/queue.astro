@@ -1,6 +1,12 @@
 ---
 import SiteFooter from "../components/SiteFooter.astro";
 import GoogleAnalytics from "../components/GoogleAnalytics.astro";
+import BrandLogo from "../components/BrandLogo.astro";
+import OptimizedPicture from "../components/OptimizedPicture.astro";
+import FontPreloads from "../components/FontPreloads.astro";
+import SecurityMeta from "../components/SecurityMeta.astro";
+import "../styles/fonts.css";
+import assets from "../data/assets.generated.json";
 
 const SHEET_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vT6xkgqP_QRVKYf5OhLuLI7eIxCADsnDoX5keC-vAat_YmeAF7_fH6nwOAvW6vASS-tq7ysV5ZnqwYn/pub?gid=0&single=true&output=csv";
@@ -12,23 +18,22 @@ const publicSupabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "";
 <!doctype html>
 <html lang="th">
   <head>
-    <GoogleAnalytics />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <SecurityMeta />
+    <FontPreloads />
+    <GoogleAnalytics />
     <title>ตารางคิวว่างร้านทำเล็บคลองหก คลอง 6 | Phonnapa Studio</title>
     <meta name="description" content="เช็กตารางคิวว่าง Phonnapa Studio ร้านทำเล็บคลองหก คลอง 6 ใกล้ มทร.ธัญบุรี ดูเวลาว่างล่วงหน้าแล้วติดต่อร้านผ่าน LINE เพื่อยืนยันคิว" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://phonnapastudio.github.io/queue/" />
-    <link rel="icon" href="/images/logo.webp" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Pridi:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="icon" href={assets.logo.sources.webp[0].src} />
   </head>
 
   <body>
     <header class="site-header">
       <a class="brand" href={base} aria-label="กลับหน้าแรก Phonnapa Studio">
-        <img src="/images/logo.webp" alt="โลโก้ Phonnapa Studio" />
+        <BrandLogo alt="โลโก้ Phonnapa Studio" />
         <span>Phonnapa <i>Studio</i></span>
       </a>
       <a class="back-link" href={base}><span>←</span> กลับหน้าแรก</a>
@@ -40,7 +45,7 @@ const publicSupabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "";
           <picture aria-hidden="true">
             <source media="(prefers-reduced-motion: reduce)" srcset="/images/cover.webp" />
             <source media="(max-width: 680px)" srcset="/images/lofi-bg-mobile.gif" />
-            <img src="/images/lofi-bg-desktop.gif" alt="" />
+            <img src="/images/lofi-bg-desktop.gif" alt="" width="1200" height="736" decoding="async" fetchpriority="low" />
           </picture>
           <div class="lofi-overlay">
             <div class="hero-gif-copy">
@@ -49,12 +54,12 @@ const publicSupabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "";
               <p class="intro-copy">ตรวจสอบคิวว่างร้านทำเล็บคลอง 6 เบื้องต้น แล้วทัก LINE เพื่อให้ทางร้านยืนยันคิวอีกครั้งค่ะ</p>
             </div>
             <button id="lofi-toggle" class="lofi-toggle" type="button" aria-pressed="false" aria-label="ปิดเพลงบรรยากาศ">
-              <img src="/images/album.jpg" alt="" />
+              <OptimizedPicture asset={assets.album} alt="" sizes="38px" loading="eager" fetchpriority="low" />
               <span class="music-icon">Ⅱ</span>
               <span class="music-label">พักเพลง</span>
             </button>
           </div>
-          <audio id="lofi-audio" preload="auto" autoplay loop><source src="/audio/lofi.mp3" type="audio/mpeg" /></audio>
+          <audio id="lofi-audio" preload="none" autoplay loop data-src="/audio/lofi.mp3"></audio>
         </article>
       </section>
 
@@ -125,7 +130,7 @@ const publicSupabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "";
     <SiteFooter />
     <a class="mobile-line" href="https://line.me/R/ti/p/@153nuymp" target="_blank" rel="noopener">ติดต่อร้านผ่าน LINE</a>
 
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" is:raw></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" defer is:raw></script>
     <script is:inline>
       window.addEventListener("DOMContentLoaded", () => {
         const scheduleEl = document.getElementById("schedule");
@@ -141,6 +146,11 @@ const publicSupabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "";
         const lofiToggle = document.getElementById("lofi-toggle");
         const musicIcon = lofiToggle?.querySelector(".music-icon");
         const musicLabel = lofiToggle?.querySelector(".music-label");
+        function prepareAudio() {
+          if (!(lofiAudio instanceof HTMLAudioElement) || lofiAudio.src) return;
+          lofiAudio.src = lofiAudio.dataset.src || "";
+          lofiAudio.load();
+        }
         function syncMusicUI(playing) {
           lofiToggle?.classList.toggle("playing", playing);
           lofiToggle?.setAttribute("aria-pressed", String(playing));
@@ -151,6 +161,7 @@ const publicSupabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "";
         lofiToggle?.addEventListener("click", async () => {
           if (!(lofiAudio instanceof HTMLAudioElement)) return;
           if (lofiAudio.paused) {
+            prepareAudio();
             try { await lofiAudio.play(); syncMusicUI(true); }
             catch { syncMusicUI(false); }
           } else { lofiAudio.pause(); syncMusicUI(false); }
@@ -160,7 +171,9 @@ const publicSupabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "";
 
         async function startMusicAutomatically() {
           if (!(lofiAudio instanceof HTMLAudioElement)) return;
+          if (navigator.connection?.saveData) { syncMusicUI(false); return; }
           try {
+            prepareAudio();
             lofiAudio.muted = true;
             await lofiAudio.play();
             syncMusicUI(true);
@@ -170,7 +183,9 @@ const publicSupabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "";
             syncMusicUI(false);
           }
         }
-        startMusicAutomatically();
+        const scheduleMusic = () => window.setTimeout(startMusicAutomatically, 1200);
+        if (document.readyState === "complete") scheduleMusic();
+        else window.addEventListener("load", scheduleMusic, { once: true });
 
         if (!scheduleEl || !dateStrip || !slotGrid) {
           if (loadingEl) loadingEl.hidden = true;
@@ -326,7 +341,7 @@ const publicSupabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "";
   :root { --ink:#30292c; --plum:#765463; --wine:#694553; --paper:#f9f5f4; --blush:#efe3e5; --line:#ddd3d4; --muted:#746b6e; --green:#5d8a6a; --green-bg:#e7f0e9; --red:#a55d65; --red-bg:#f2e6e8; --gold:#b88943; --gold-bg:#f5eddf; --gray-bg:#eee9ea; }
   * { box-sizing:border-box; }
   html { scroll-behavior:smooth; }
-  body { margin:0; background:var(--paper); color:var(--ink); font-family:"IBM Plex Sans Thai",sans-serif; font-weight:300; line-height:1.65; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:"IBM Plex Sans Thai","Noto Sans Thai",Tahoma,sans-serif; font-weight:400; line-height:1.65; }
   a { color:inherit; text-decoration:none; } img { display:block; width:100%; } h1,h2,h3,p { margin-top:0; }
   h1,h2,h3,.brand { font-family:"Pridi",serif; font-weight:500; }
   .site-header { height:82px; display:flex; align-items:center; justify-content:space-between; padding:0 clamp(24px,6vw,92px); border-bottom:1px solid rgba(105,69,83,.1); background:rgba(249,245,244,.95); }
@@ -367,7 +382,7 @@ const publicSupabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "";
   .day-status.available { color:#3f6749; background:var(--green-bg); } .day-status.booked { color:#864650; background:var(--red-bg); } .day-status.holiday { color:#805b25; background:var(--gold-bg); }
   .slot-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:18px; }
   .slot-card { min-height:116px; padding:18px 20px; border:1px solid var(--line); background:#fff; display:flex; align-items:flex-end; justify-content:space-between; gap:12px; }
-  .slot-card>div>span { display:block; color:#9a9093; font-size:.55rem; letter-spacing:.12em; text-transform:uppercase; }
+  .slot-card>div>span { display:block; color:#6f6669; font-size:.55rem; letter-spacing:.12em; text-transform:uppercase; }
   .slot-card strong { display:block; margin-top:3px; font:500 1.6rem "Pridi",serif; }
   .slot-card .customer-name { display:block; max-width:180px; margin-top:4px; color:var(--wine); font-size:.7rem; font-weight:500; overflow-wrap:anywhere; }
   .slot-card p { display:flex; align-items:center; gap:6px; margin:0; font-size:.65rem; font-weight:500; }
@@ -378,7 +393,7 @@ const publicSupabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "";
   .calendar-message,.calendar-error { padding:16px; border:1px solid var(--line); background:#fffdfc; color:var(--muted); text-align:center; font-size:.8rem; }
   .calendar-message { margin-top:14px; }
   .calendar-error { color:#854d5e; background:#f4e9ec; margin-bottom:12px; }
-  .updated { margin-top:12px; color:#9b9194; text-align:right; font-size:.62rem; letter-spacing:.05em; }
+  .updated { margin-top:12px; color:#746b6e; text-align:right; font-size:.62rem; letter-spacing:.05em; }
   .sidebar { display:grid; gap:20px; }
   .contact-card,.important-card { padding:36px; background:#fffdfc; border:1px solid var(--line); }
   .contact-card h2 { font-size:1.75rem; margin-bottom:12px; } .contact-card>p:not(.eyebrow) { color:var(--muted); font-size:.82rem; }
@@ -398,18 +413,18 @@ const publicSupabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "";
   .lofi-overlay .eyebrow { color:#ead9df; margin-bottom:10px; } .lofi-overlay h3 { font-size:1.65rem; line-height:1.25; margin-bottom:8px; }
   .lofi-overlay>div>p:last-child { max-width:260px; color:#e1d5d9; font-size:.73rem; }
   .lofi-toggle { align-self:flex-start; display:grid; grid-template-columns:38px 20px auto; gap:10px; align-items:center; padding:8px 16px 8px 8px; border:1px solid rgba(255,255,255,.45); border-radius:30px; background:rgba(255,255,255,.13); color:white; backdrop-filter:blur(8px); cursor:pointer; }
-  .lofi-toggle>img { width:38px; height:38px; border-radius:50%; object-fit:cover; }
+  .lofi-toggle>picture,.lofi-toggle>picture img { display:block; width:38px; height:38px; border-radius:50%; object-fit:cover; }
   .lofi-toggle .music-icon { font-size:.72rem; } .lofi-toggle .music-label { font-size:.66rem; font-weight:600; letter-spacing:.08em; }
-  .lofi-toggle.playing>img { animation:disc-spin 6s linear infinite; } .lofi-toggle:hover { background:rgba(255,255,255,.22); }
+  .lofi-toggle.playing>picture { animation:disc-spin 6s linear infinite; } .lofi-toggle:hover { background:rgba(255,255,255,.22); }
   @keyframes disc-spin { to { transform:rotate(360deg); } }
-  @media (prefers-reduced-motion:reduce) { .lofi-toggle.playing>img { animation:none; } }
+  @media (prefers-reduced-motion:reduce) { .lofi-toggle.playing>picture { animation:none; } }
   .important-card h3 { font-size:1.35rem; margin-bottom:14px; }
   .note-list p { padding:11px 0; margin:0; border-bottom:1px solid var(--line); color:var(--muted); font-size:.75rem; }
   .note-list .deposit { margin:12px 0; padding:11px; border:1px solid #dbc5cc; background:var(--blush); color:var(--wine); text-align:center; font-size:.82rem; font-weight:600; letter-spacing:.08em; }
   .help { display:flex; justify-content:space-between; gap:50px; align-items:center; padding:70px clamp(24px,7vw,110px); background:#fffdfc; border-top:1px solid var(--line); }
   .help h2 { font-size:2rem; margin-bottom:5px; } .help>div>p:last-child { color:var(--muted); font-size:.8rem; }
   .help-links { display:flex; gap:14px; } .help-links a { min-width:210px; padding:20px; border:1px solid var(--line); display:flex; flex-direction:column; } .help-links span { color:var(--plum); font-size:.58rem; letter-spacing:.15em; } .help-links strong { font-size:.82rem; margin-top:3px; }
-  footer { display:flex; justify-content:space-between; gap:20px; padding:28px clamp(24px,7vw,110px); color:#8b8084; background:#292326; font-size:.62rem; }
+  footer { display:flex; justify-content:space-between; gap:20px; padding:28px clamp(24px,7vw,110px); color:#978a8f; background:#292326; font-size:.62rem; }
   .mobile-line { display:none; }
 
   @media (max-width:980px) {

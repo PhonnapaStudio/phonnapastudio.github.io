@@ -1,0 +1,12 @@
+---
+import OptimizedPicture from "./OptimizedPicture.astro";
+import assets from "../data/assets.generated.json";
+
+interface Props {
+  alt?: string;
+}
+
+const { alt = "" } = Astro.props;
+---
+
+<OptimizedPicture asset={assets.logo} alt={alt} sizes="36px" loading="eager" fetchpriority="low" />

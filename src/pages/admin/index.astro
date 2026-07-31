@@ -1,5 +1,10 @@
 ---
+import BrandLogo from "../../components/BrandLogo.astro";
+import FontPreloads from "../../components/FontPreloads.astro";
+import SecurityMeta from "../../components/SecurityMeta.astro";
+import "../../styles/fonts.css";
 import SiteFooter from "../../components/SiteFooter.astro";
+import assets from "../../data/assets.generated.json";
 ---
 
 <!doctype html>
@@ -7,16 +12,15 @@ import SiteFooter from "../../components/SiteFooter.astro";
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <SecurityMeta />
+    <FontPreloads />
     <meta name="robots" content="noindex, nofollow" />
     <title>หลังบ้าน | Phonnapa Studio</title>
-    <link rel="icon" href="/images/logo.webp" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Pridi:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="icon" href={assets.logo.sources.webp[0].src} />
   </head>
   <body>
     <header class="admin-header">
-      <a class="brand" href="/"><img src="/images/logo.webp" alt="" /><span>Phonnapa <i>Studio</i></span></a>
+      <a class="brand" href="/"><BrandLogo /><span>Phonnapa <i>Studio</i></span></a>
       <div><a href="/" target="_blank">ดูหน้าเว็บ ↗</a><button id="logout" type="button" hidden>ออกจากระบบ</button></div>
     </header>
 
@@ -273,7 +277,7 @@ import SiteFooter from "../../components/SiteFooter.astro";
         (data || []).forEach((promotion, index) => {
           const card = document.createElement("article");
           card.className = "promotion-card";
-          card.innerHTML = `<img src="${promotion.image_url}" alt=""><div><strong>${promotion.title || `โปรโมชั่น ${index + 1}`}</strong><label><input type="checkbox" data-promotion-active="${promotion.id}"${promotion.active ? " checked" : ""}> แสดง Popup</label><button type="button" data-delete-promotion="${promotion.id}" data-storage-path="${promotion.storage_path}">ลบรูป</button></div>`;
+          card.innerHTML = `<img src="${promotion.image_url}" alt="" width="1080" height="1350" loading="lazy" decoding="async"><div><strong>${promotion.title || `โปรโมชั่น ${index + 1}`}</strong><label><input type="checkbox" data-promotion-active="${promotion.id}"${promotion.active ? " checked" : ""}> แสดง Popup</label><button type="button" data-delete-promotion="${promotion.id}" data-storage-path="${promotion.storage_path}">ลบรูป</button></div>`;
           list.appendChild(card);
         });
         list.querySelectorAll("[data-promotion-active]").forEach((input) => input.addEventListener("change", async () => {
@@ -335,7 +339,7 @@ import SiteFooter from "../../components/SiteFooter.astro";
 
 <style is:global>
   :root { --ink:#30292c; --plum:#765463; --wine:#694553; --paper:#f9f5f4; --blush:#efe3e5; --line:#ddd3d4; --muted:#746b6e; --green:#5d8a6a; --red:#a55d65; --gold:#b88943; }
-  * { box-sizing:border-box; } body { margin:0; background:var(--paper); color:var(--ink); font-family:"IBM Plex Sans Thai",sans-serif; font-weight:300; line-height:1.6; } button,input,select { font:inherit; } a { color:inherit; text-decoration:none; } [hidden] { display:none!important; }
+  * { box-sizing:border-box; } body { margin:0; background:var(--paper); color:var(--ink); font-family:"IBM Plex Sans Thai","Noto Sans Thai",Tahoma,sans-serif; font-weight:400; line-height:1.6; } button,input,select { font:inherit; } a { color:inherit; text-decoration:none; } [hidden] { display:none!important; }
   h1,h2,h3,.brand { font-family:"Pridi",serif; font-weight:500; } h1,h2,p { margin-top:0; }
   .admin-header { height:78px; padding:0 clamp(22px,6vw,90px); display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); background:#fffdfc; }
   .brand { display:flex; align-items:center; gap:12px; } .brand img { width:34px; height:34px; border-radius:50%; object-fit:cover; filter:grayscale(1); } .brand i { color:var(--plum); font-style:normal; }
